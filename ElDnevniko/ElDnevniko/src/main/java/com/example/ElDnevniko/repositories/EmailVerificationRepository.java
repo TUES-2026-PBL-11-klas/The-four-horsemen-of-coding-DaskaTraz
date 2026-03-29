@@ -11,5 +11,5 @@ import com.example.ElDnevniko.domain.entities.UserEntity;
 @Repository
 public interface EmailVerificationRepository extends JpaRepository<EmailVerificationEntity, Integer>
 {
-    Optional<EmailVerificationEntity> findByUser(UserEntity user);    
+    Optional<EmailVerificationEntity> findByUser(UserEntity user);
 }

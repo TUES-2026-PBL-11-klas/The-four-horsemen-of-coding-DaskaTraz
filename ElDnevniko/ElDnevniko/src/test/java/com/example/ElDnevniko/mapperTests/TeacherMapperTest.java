@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.ElDnevniko.domain.dtos.TeacherRegisterDto;
 import com.example.ElDnevniko.domain.entities.TeacherEntity;
-import com.example.ElDnevniko.domain.entities.UserStatus;
 import com.example.ElDnevniko.mappers.TeacherMapper;
 import com.example.ElDnevniko.testUtils.TestDtoData;
 
@@ -28,8 +27,7 @@ public class TeacherMapperTest {
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getUser()).isNotNull();
-        assertThat(entity.getUser().getUsername()).isEqualTo(dto.getUsername());
-        assertThat(entity.getUser().getStatus()).isEqualTo(UserStatus.NOTVERIFIED);
+        assertThat(entity.getUser()).isNull();
+
     }
 }

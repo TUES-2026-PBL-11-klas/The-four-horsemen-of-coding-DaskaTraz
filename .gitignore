@@ -22,3 +22,6 @@
 *.rar
 *.tar
 *.zip
+
+### env files ###
+*.env

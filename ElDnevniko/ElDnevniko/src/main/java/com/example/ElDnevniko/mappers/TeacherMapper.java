@@ -6,10 +6,10 @@ import org.mapstruct.Mapping;
 import com.example.ElDnevniko.domain.dtos.TeacherRegisterDto;
 import com.example.ElDnevniko.domain.entities.TeacherEntity;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring")
 public interface TeacherMapper{
     
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user", source = ".")
+    @Mapping(target = "user", ignore = true)
     TeacherEntity toEntity(TeacherRegisterDto teacherDto);
 }
