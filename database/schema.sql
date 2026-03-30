@@ -22,3 +22,19 @@ CREATE TABLE classes (
     graduation_year INTEGER NOT NULL
 );
 
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    class_id INTEGER NOT NULL REFERENCES classes(id),
+    number_in_class INTEGER NOT NULL
+);
+
+CREATE TABLE teachers (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE subjects (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
