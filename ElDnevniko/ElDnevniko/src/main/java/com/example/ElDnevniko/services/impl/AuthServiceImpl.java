@@ -3,9 +3,12 @@ package com.example.ElDnevniko.services.impl;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
-
+import org.springframework.security.core.userdetails.User;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +41,7 @@ import com.example.ElDnevniko.services.AuthService;
 
 import jakarta.transaction.Transactional;
 @Service
-public class AuthServiceImpl implements AuthService
+public class AuthServiceImpl implements AuthService, UserDetailsService
 {
     
     private UserRepository userRepository;
@@ -227,4 +230,16 @@ public class AuthServiceImpl implements AuthService
         return minutesPassed > 60; 
     }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
+
+        return User
+                .withUsername(user.getEmail())
+                .password(user.getHashPassword())
+                .authorities(user.getRole().name())
+                .build();
+    }
 }
