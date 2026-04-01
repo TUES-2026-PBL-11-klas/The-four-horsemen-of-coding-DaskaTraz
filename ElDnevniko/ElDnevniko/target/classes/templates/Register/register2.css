@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff9966, #ff5e62);
+}
+
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+
+.card h2 {
+  margin-bottom: 20px;
+}
+
+
+.role-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+
+.role-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.role-buttons button.active {
+  background: #ff5e62;
+  color: white;
+  border-color: #ff5e62;
+}
+
+
+.card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+
+.continue-btn {
+  width: 100%;
+  padding: 10px;
+  background: #ff5e62;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
+.continue-btn:hover {
+  background: #e14b50;
+}
+

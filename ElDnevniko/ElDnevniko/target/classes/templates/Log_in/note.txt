@@ -1,0 +1,6 @@
+1 sign in
+2 Register
+3 Daskal 
+3.1 прозорец за записване на уценки
+4 Student
+5 dobavqne na ocenka 
