@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Step 2</title>
+  <link rel="stylesheet" href="register2.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      <h2>Избери роля</h2>
+
+      <div class="role-buttons">
+        <button type="button" id="teacherBtn">Учител</button>
+        <button type="button" id="studentBtn">Ученик</button>
+      </div>
+
+      <button class="continue-btn" onclick="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    let selectedRole = "";
+
+    const teacherBtn = document.getElementById("teacherBtn");
+    const studentBtn = document.getElementById("studentBtn");
+
+    teacherBtn.onclick = () => {
+      selectedRole = "teacher";
+      teacherBtn.classList.add("active");
+      studentBtn.classList.remove("active");
+    };
+
+    studentBtn.onclick = () => {
+      selectedRole = "student";
+      studentBtn.classList.add("active");
+      teacherBtn.classList.remove("active");
+    };
+
+    function goNext() {
+      if (!selectedRole) {
+        alert("Моля избери роля!");
+        return;
+      }
+
+      if (selectedRole === "teacher") {
+        window.location.href = "page1.html";
+      } else {
+        window.location.href = "page2.html";
+      }
+    }
+  </script>
+
+</body>
+</html>
