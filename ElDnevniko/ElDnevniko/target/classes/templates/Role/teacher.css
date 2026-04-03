@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #f7971e, #ffd200);
+  background: linear-gradient(135deg, #af6d1c, #ffd200);
 }
 
 
@@ -123,5 +123,5 @@ body {
 
 
 .card button[type="submit"]:hover {
-  background: #e68900;
+  background: #de7c0c;
 }

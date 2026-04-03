@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  font-family: monospace;
+  background: #1e1e1e;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+}
+
+/* SUBJECT BOX */
+.subjects-box {
+  border: 2px dashed #aaa;
+  padding: 10px;
+  width: 120px;
+  text-align: center;
+}
+
+.subjects-box button {
+  width: 100%;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.subjects-box ul {
+  list-style: none;
+  padding: 0;
+  display: none;
+}
+
+.subjects-box li {
+  margin: 5px 0;
+}
+
+/* GRADES */
+.grades-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  border-bottom: 1px dashed #aaa;
+  padding: 5px 10px;
+  width: 300px;
+}
+
+/* IMAGE BOX */
+.image-box {
+  border: 2px dashed #aaa;
+  width: 200px;
+  height: 200px;
+  overflow: hidden; /* 🔥 ТОВА Е КЛЮЧОВОТО */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* СНИМКАТА НЯМА КАК ДА ИЗЛЕЗЕ */
+.image-box img {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}

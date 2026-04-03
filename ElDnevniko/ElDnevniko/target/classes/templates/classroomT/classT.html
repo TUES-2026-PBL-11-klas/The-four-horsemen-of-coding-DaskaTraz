@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shkolo Style</title>
+  <link rel="stylesheet" href="classT.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- SUBJECT BOX -->
+  <div class="subjects-box">
+    <button onclick="toggleSubjects()">Sub</button>
+    <ul id="subjectsList">
+      <li>Math</li>
+      <li>English</li>
+      <li>Biology</li>
+      <li>History</li>
+      <li>Physics</li>
+      <li>Geography</li>
+      <li>IT</li>
+    </ul>
+  </div>
+
+  <!-- STUDENTS / GRADES -->
+  <div class="grades-box">
+    <div class="row">1 | Nikolai | 6,4,5</div>
+    <div class="row">2 | Kristian | 3,2,5</div>
+    <div class="row">3 | __________ | ______</div>
+    <div class="row">4 | __________ | ______</div>
+    <div class="row">5 | __________ | ______</div>
+    <div class="row">6 | __________ | ______</div>
+    <div class="row">7 | __________ | ______</div>
+    <div class="row">8 | __________ | ______</div>
+    <div class="row">9 | __________ | ______</div>
+    <div class="row">10 | __________ | ______</div>
+    <div class="row">11 | __________ | ______</div>
+  </div>
+
+  <!-- IMAGE BOX -->
+  <div class="image-box">
+  <img src="diagram.png" alt="diagram">
+</div>
+
+<script>
+function toggleSubjects() {
+  const list = document.getElementById("subjectsList");
+
+  if (list.style.display === "none" || list.style.display === "") {
+    list.style.display = "block";
+  } else {
+    list.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
