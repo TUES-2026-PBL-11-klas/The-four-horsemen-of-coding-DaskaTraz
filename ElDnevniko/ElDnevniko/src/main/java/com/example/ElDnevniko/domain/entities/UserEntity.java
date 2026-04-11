@@ -1,5 +1,7 @@
 package com.example.ElDnevniko.domain.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,11 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +34,7 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "password_hash", nullable = false)
     private String hashPassword;
 
     @Enumerated(EnumType.STRING)
@@ -37,4 +42,8 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @Builder.Default
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
