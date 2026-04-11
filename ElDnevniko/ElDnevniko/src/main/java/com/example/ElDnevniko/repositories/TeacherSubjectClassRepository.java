@@ -18,6 +18,8 @@ public interface TeacherSubjectClassRepository extends JpaRepository<TeacherSubj
     boolean existsByTeacherIdAndSubjectIdAndSchoolClassId(int teacherId, int subjectId, int classId);
     
     boolean existsBySubjectIdAndSchoolClassId(int subjectId, int classId);
-
+    
+    @Query("SELECT tsc.schoolClass.id FROM TeacherSubjectClassEntity tsc WHERE tsc.subject.id = :subjectId")
+    List<Integer> findOccupiedClassIdsBySubject(Integer subjectId);
     
 }

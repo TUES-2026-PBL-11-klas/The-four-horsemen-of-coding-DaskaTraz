@@ -1,44 +1,29 @@
 package com.example.ElDnevniko.services.impl;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.ElDnevniko.domain.dtos.LoginRequestDto;
-import com.example.ElDnevniko.domain.dtos.StudentRegisterDto;
-import com.example.ElDnevniko.domain.dtos.TeacherRegisterDto;
-import com.example.ElDnevniko.domain.dtos.UserRegisterDto;
-import com.example.ElDnevniko.domain.entities.EmailVerificationEntity;
-import com.example.ElDnevniko.domain.entities.StudentEntity;
-import com.example.ElDnevniko.domain.entities.TeacherEntity;
-import com.example.ElDnevniko.domain.entities.UserEntity;
-import com.example.ElDnevniko.domain.entities.UserStatus;
-import com.example.ElDnevniko.exceptions.AccountNotActivatedException;
-import com.example.ElDnevniko.exceptions.InvalidCredentialsException;
-import com.example.ElDnevniko.exceptions.InvalidTokenException;
-import com.example.ElDnevniko.exceptions.InvalidUserDataException;
-import com.example.ElDnevniko.exceptions.TokenExpiredException;
-import com.example.ElDnevniko.exceptions.UserAlreadyExistException;
-import com.example.ElDnevniko.exceptions.UserNotFoundException;
-import com.example.ElDnevniko.exceptions.VerificationAlreadyCompleteException;
-import com.example.ElDnevniko.exceptions.VerificationTokenNotFoundException;
-import com.example.ElDnevniko.mappers.StudentMapper;
-import com.example.ElDnevniko.mappers.TeacherMapper;
-import com.example.ElDnevniko.mappers.UserMapper;
-import com.example.ElDnevniko.repositories.EmailVerificationRepository;
-import com.example.ElDnevniko.repositories.StudentRepository;
-import com.example.ElDnevniko.repositories.TeacherRepository;
-import com.example.ElDnevniko.repositories.UserRepository;
+import com.example.ElDnevniko.domain.dtos.*;
+import com.example.ElDnevniko.domain.entities.*;
+import com.example.ElDnevniko.exceptions.*;
+import com.example.ElDnevniko.mappers.*;
+import com.example.ElDnevniko.repositories.*;
 import com.example.ElDnevniko.services.AuthService;
 
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 @Service
 public class AuthServiceImpl implements AuthService, UserDetailsService
@@ -48,125 +33,162 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
     private StudentRepository studentRepository;
     private TeacherRepository teacherRepository;
     private UserMapper userMapper;
-    private StudentMapper studentMapper;
-    private TeacherMapper teacherMapper;
     private PasswordEncoder passwordEncoder;
     private EmailVerificationRepository emailValidationRepo;
     private JavaMailSender javaMailSender;
+    private SchoolClassRepository schoolClassRepository;
+    private SubjectRepository subjectRepository;
+    private TeacherSubjectClassRepository teacherSubjectClassR;
+    private SubjectMapper subjectMapper;
+    private SchoolClassMapper schoolClassMapper;
     
     public AuthServiceImpl(
         UserRepository userRepository,
         StudentRepository studentRepository,
         TeacherRepository teacherRepository,
         UserMapper userMapper,
-        StudentMapper studentMapper,
-        TeacherMapper teacherMapper,
+        SubjectMapper subjectMapper,
+        SchoolClassMapper schoolClassMapper,
         PasswordEncoder passwordEncoder,
         EmailVerificationRepository emailVR,
-        JavaMailSender javaMS
+        JavaMailSender javaMS,
+        SchoolClassRepository schoolClassRepository,
+        SubjectRepository subjectRepository,
+        TeacherSubjectClassRepository teacherSubjectClassR
     )
     {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
         this.userMapper = userMapper;
-        this.studentMapper = studentMapper;
-        this.teacherMapper = teacherMapper;
         this.passwordEncoder = passwordEncoder;
         this.emailValidationRepo = emailVR;
         this.javaMailSender = javaMS;
+        this.schoolClassRepository = schoolClassRepository;
+        this.subjectRepository = subjectRepository;
+        this.teacherSubjectClassR = teacherSubjectClassR;
+        this.schoolClassMapper = schoolClassMapper;
+        this.subjectMapper = subjectMapper;
     }
 
     @Transactional
     @Override
-    public void registerUser(UserRegisterDto registerDto)
+    public int registerUser(UserRegisterDto registerDto)
     {
-        if(registerDto.getEmail().isEmpty())
+        this.userRepository.findByEmail(registerDto.getEmail())
+        .or(() -> this.userRepository.findByUsername(registerDto.getUsername()))
+        .ifPresent(existingUser -> 
         {
-            throw new InvalidUserDataException("email must not be empty");
-        }
-        if(registerDto.getUsername().isEmpty())
-        {
-            throw new InvalidUserDataException("username must not be empty");
-        }
-        if(registerDto.getPassword().isEmpty())
-        {
-            throw new InvalidUserDataException("password must not be empty");
-        }
+            
+            if(existingUser.getStatus() == UserStatus.ACTIVE) 
+            {
+                throw new UserAlreadyExistException("Account with that name or email already exist");
+            }
 
-        if(this.userRepository.existsByEmail(registerDto.getEmail()))
-        {
-            throw new UserAlreadyExistException("User with email " + registerDto.getEmail() + "already exists");
-        }
-        if(this.userRepository.existsByUsername(registerDto.getUsername()))
-        {
-            throw new UserAlreadyExistException("User with username " + registerDto.getUsername() + "already exists");
-        }
-        String hashPassword = this.passwordEncoder.encode(registerDto.getPassword());
-        registerDto.setPassword(hashPassword);
+            
+            if(existingUser.getStatus() == UserStatus.NOTVERIFIED) 
+            {
+                this.emailValidationRepo.findByUser(existingUser)
+                        .ifPresent(ev -> this.emailValidationRepo.delete(ev));
+                
+                this.studentRepository.findByUser(existingUser)
+                        .ifPresent(student -> this.studentRepository.delete(student));
+                
+                this.teacherRepository.findByUser(existingUser)
+                        .ifPresent(teacher -> this.teacherRepository.delete(teacher));
+            }
+            
+            this.userRepository.delete(existingUser);
+            this.userRepository.flush();
+        });
         UserEntity user = this.userMapper.toEntity(registerDto);
+        user.setHashPassword(this.passwordEncoder.encode(registerDto.getPassword()));
+        user.setStatus(UserStatus.PROFILE_INCOMPLETE);
+        user.setCreatedAt(LocalDateTime.now());
         UserEntity savedUser = this.userRepository.save(user);
-        switch(registerDto.getRole()) 
-        {
-            case STUDENT:
-                registerStudent((StudentRegisterDto)registerDto, savedUser);
-                break;
-            case TEACHER:
-                registerTeacher((TeacherRegisterDto)registerDto, savedUser);
-                break;
-            default:
-                throw new InvalidUserDataException("This role does not exists");
-        }    
+        return savedUser.getId();
 
     }
     
     @Override
-    public void registerStudent(StudentRegisterDto registerDto, UserEntity user)
+    public int chooseRole(int userId, UserRole role)
     {
-        if(registerDto.getNumberInClass() <= 0)
-        {
-            throw new InvalidUserDataException("Number in class must be greater than 0");
-        }
-        StudentEntity student = this.studentMapper.toEntity(registerDto);
-        student.setUser(user);
-        this.studentRepository.save(student);
-    }
-
-    @Override
-    public void registerTeacher(TeacherRegisterDto registerDto, UserEntity user)
-    {
-        TeacherEntity teacher = this.teacherMapper.toEntity(registerDto);
-        teacher.setUser(user);
-        this.teacherRepository.save(teacher);
+        UserEntity user = this.userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException("this user does not exist"));
+        user.setRole(role);
+        UserEntity savedUser = this.userRepository.save(user);
+        return savedUser.getId();
     }
 
     @Transactional
     @Override
-    public void login(LoginRequestDto loginDto)
+    public StudentEntity registerStudent(StudentRegisterDto registerDto)
     {
-        if(loginDto.getEmail().isEmpty())
+        UserEntity user = this.userRepository.findById(registerDto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        if(!user.getRole().equals(UserRole.STUDENT))
         {
-            throw new InvalidUserDataException("email must not be empty");
+            throw new InvalidUserDataException("User havent choosed the student role");
         }
-        if(loginDto.getPassword().isEmpty())
+        SchoolClassEntity schoolClass = this.schoolClassRepository.findById(registerDto.getSchoolClassId())
+                .orElseThrow(() -> new SchoolClassNotFoundException("Class not found"));
+
+        StudentEntity student = new StudentEntity();
+        student.setUser(user);
+        student.setSchoolClass(schoolClass);
+        student.setNumberInClass(-1);
+        
+
+        user.setStatus(UserStatus.NOTVERIFIED);
+        this.userRepository.save(user);
+
+        return this.studentRepository.save(student);
+    }
+
+    @Transactional
+    @Override
+    public TeacherEntity registerTeacher(TeacherRegisterDto registerDto)
+    {
+        UserEntity user = this.userRepository.findById(registerDto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        if(!user.getRole().equals(UserRole.TEACHER))
         {
-            throw new InvalidUserDataException("password must not be empty");
+            throw new InvalidUserDataException("User havent choosed the teacher role");
         }
-        if(!this.userRepository.existsByEmail(loginDto.getEmail()))
+        
+        TeacherEntity teacherEntity = new TeacherEntity();
+        teacherEntity.setUser(user);
+        teacherEntity = this.teacherRepository.save(teacherEntity);
+        Set<TeacherSubjectClassEntity> teacherAssiments = new HashSet<>();
+        for(TeacherSubjectRegisterDto teacherSubjectDto : registerDto.getAssignments())
         {
-            throw new InvalidCredentialsException("No user with " + loginDto.getEmail() + " email exists");
+            SubjectEntity subject = this.subjectRepository.findById(teacherSubjectDto.getSubjectId())
+            .orElseThrow(() -> new SubjectNotFoundException("this subject does not exist"));
+            for(int classId : teacherSubjectDto.getClassIds())
+            {
+                TeacherSubjectClassEntity teacherSubjectClassEntity = new TeacherSubjectClassEntity();
+                SchoolClassEntity schoolClass = this.schoolClassRepository.findById(classId)
+                .orElseThrow(() -> new SchoolClassNotFoundException("this class does not exist"));
+                teacherSubjectClassEntity.setSchoolClass(schoolClass);
+                teacherSubjectClassEntity.setSubject(subject);
+                teacherSubjectClassEntity.setTeacher(teacherEntity);
+                if(this.teacherSubjectClassR.existsBySubjectIdAndSchoolClassId(subject.getId(), classId))
+                {
+                    throw new InvalidUserDataException("this subject is already tought to this class by another teacher");
+                }
+                teacherAssiments.add(teacherSubjectClassEntity);
+                this.teacherSubjectClassR.save(teacherSubjectClassEntity);
+            }
         }
-        UserEntity user = this.userRepository.findByEmail(loginDto.getEmail()).get();
-        if(!this.passwordEncoder.matches(loginDto.getPassword(), user.getHashPassword()))
-        {
-            throw new InvalidCredentialsException("Invalid password");
-        }
-        if(!user.getStatus().equals(UserStatus.ACTIVE))
-        {
-            throw new AccountNotActivatedException("this account is not activated");
-        }
-    }   
-    
+        user.setStatus(UserStatus.NOTVERIFIED);
+        teacherEntity.setUser(user);
+        teacherEntity.setTeacherAssignments(teacherAssiments);
+        return this.teacherRepository.save(teacherEntity);
+
+    }
+
+
+    @Transactional
     @Override
     public void validateRegisterToken(String email, String token)
     {
@@ -190,13 +212,22 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
         emailVerification.setVerified(true);
         this.emailValidationRepo.save(emailVerification);
         user.setStatus(UserStatus.ACTIVE);
+        if(user.getRole().equals(UserRole.STUDENT))
+        {
+            StudentEntity student = this.studentRepository.findByUser(user)
+            .orElseThrow(() -> new UserNotFoundException("user not found"));
+            int studentNumb = this.studentRepository.countActiveBeforeAlphabetically(student.getSchoolClass().getId(), user.getUsername()) + 1;
+            student.setNumberInClass(studentNumb);
+            this.studentRepository.save(student);
+            this.studentRepository.incrementActiveNumbersAfter(student.getSchoolClass().getId(), student.getUser().getUsername());
+        }
         this.userRepository.save(user);
 
     }
     
     @Transactional
     @Override
-    public void sendVerificationEmail(String email) 
+    public void sendVerificationEmail(String email)
     {
          
         UserEntity user = this.userRepository.findByEmail(email)
@@ -204,22 +235,29 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
         EmailVerificationEntity verification = this.emailValidationRepo.findByUser(user)
             .orElse(new EmailVerificationEntity(user));
 
-        verification.setToken(UUID.randomUUID().toString());
+        SecureRandom random = new SecureRandom();
+        int code = 100000 + random.nextInt(900000);
+        verification.setToken(String.valueOf(code));
         verification.setCreatedAt(LocalDateTime.now());
         verification.setVerified(false);
         
         this.emailValidationRepo.save(verification);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Verification code for Dazkatraz");
-        message.setText("Code: " + verification.getToken() + "\n\n This code expires in 60 minutes");
+
+
         try
         {
-            this.javaMailSender.send(message);
+            MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+            helper.setFrom(new InternetAddress("kaloian3141@gmail.com", "Dazkatraz"));
+            helper.setTo(email);
+            helper.setSubject("Verification Code - Dazkatraz");
+            helper.setText("<h2>Code: " + verification.getToken() + "</h2>" +
+                "<p> This code expires in 60 minutes </p>", true);
+            this.javaMailSender.send(mimeMessage);
         }
         catch(Exception e)
         {
-            throw new RuntimeException("Fail to send email to " + user.getEmail() + ":" + e.getMessage());
+            throw new EmailSendException("Fail to send email to " + user.getEmail() + ":", e);
         }
     }
 
@@ -241,5 +279,40 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
                 .password(user.getHashPassword())
                 .authorities(user.getRole().name())
                 .build();
+    }
+
+
+    @Transactional()
+    @Override
+    public List<SchoolClassResponseDto> getAllClasses() {
+        List<SchoolClassEntity> classes = this.schoolClassRepository.findAll();
+        return this.schoolClassMapper.toDtoList(classes);
+    }
+
+    @Transactional()
+    @Override
+    public List<SubjectResponseDto> getAllSubjects() {
+        List<SubjectEntity> subjects = this.subjectRepository.findAll();
+        return this.subjectMapper.toDtoList(subjects);
+    }
+
+    @Transactional()
+    @Override
+    public List<SchoolClassResponseDto> getAvailableClassesForSubject(int subjectId) 
+    {
+        List<Integer> occupiedClassIds = this.teacherSubjectClassR.findOccupiedClassIdsBySubject(subjectId);
+        
+        List<SchoolClassEntity> availableClasses;
+        
+        if(occupiedClassIds.isEmpty()) 
+        {
+            availableClasses = this.schoolClassRepository.findAll();
+        } 
+        else 
+        {
+            availableClasses = this.schoolClassRepository.findAllByIdNotIn(occupiedClassIds);
+        }
+        
+        return this.schoolClassMapper.toDtoList(availableClasses);
     }
 }
