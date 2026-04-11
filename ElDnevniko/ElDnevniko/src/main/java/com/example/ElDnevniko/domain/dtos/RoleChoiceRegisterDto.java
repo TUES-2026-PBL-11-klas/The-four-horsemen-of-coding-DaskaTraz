@@ -1,6 +1,6 @@
 package com.example.ElDnevniko.domain.dtos;
 
-import java.util.List;
+import com.example.ElDnevniko.domain.entities.UserRole;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeacherRegisterDto {
-    @NotNull(message = "user Id is required")
+public class RoleChoiceRegisterDto {
+    @NotNull(message = "User ID is required")
     private int userId;
-    private List<TeacherSubjectRegisterDto> assignments;
+    private UserRole userRole;
 }
