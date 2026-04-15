@@ -20,6 +20,8 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Integer>
 
     List<StudentEntity> findAllBySchoolClass_ClassName(String className);
 
+    List<StudentEntity> findAllBySchoolClassIdOrderByNumberInClassAsc(int classId);
+    
     @Query("SELECT COUNT(s) FROM StudentEntity s WHERE s.schoolClass.id = :classId " +
        "AND s.user.status = 'ACTIVE' AND s.user.username < :username")
     int countActiveBeforeAlphabetically(int classId, String username);

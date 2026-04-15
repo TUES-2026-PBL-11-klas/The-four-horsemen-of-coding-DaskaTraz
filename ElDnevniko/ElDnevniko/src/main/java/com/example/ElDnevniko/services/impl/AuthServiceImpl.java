@@ -277,7 +277,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
         return User
                 .withUsername(user.getEmail())
                 .password(user.getHashPassword())
-                .authorities(user.getRole().name())
+                .roles(user.getRole().name())
                 .build();
     }
 

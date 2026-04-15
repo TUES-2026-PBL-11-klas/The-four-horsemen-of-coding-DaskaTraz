@@ -117,7 +117,7 @@ public class AuthController {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(ApiResponse.success("Login successful", 
-                                                    jwtUtils.generateToken(userDetails.getUsername())));
+                                                    jwtUtils.generateToken(userDetails)));
         }
         catch(BadCredentialsException e) 
         {   

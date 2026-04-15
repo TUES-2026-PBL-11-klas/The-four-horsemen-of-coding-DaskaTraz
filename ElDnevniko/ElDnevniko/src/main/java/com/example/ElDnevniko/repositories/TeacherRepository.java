@@ -14,6 +14,8 @@ public interface TeacherRepository extends JpaRepository<TeacherEntity, Integer>
 {
     Optional<TeacherEntity> findByUserUsername(String username);
 
+    Optional<TeacherEntity> findByUserEmail(String email);
+    
     Optional<TeacherEntity> findByUser(UserEntity user);
 
     List<TeacherEntity> findAllByTeacherAssignments_SubjectId(int subjectId);

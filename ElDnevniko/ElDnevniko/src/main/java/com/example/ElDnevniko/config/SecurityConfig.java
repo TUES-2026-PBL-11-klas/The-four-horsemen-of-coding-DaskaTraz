@@ -35,32 +35,34 @@ public class SecurityConfig {
     }
 
     @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        .cors(cors -> cors.configurationSource(request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOriginPatterns(Arrays.asList("*"));
-            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-            config.setAllowedHeaders(Arrays.asList("*"));
-            config.setAllowCredentials(true);
-            return config;
-        }))
-        .exceptionHandling(exceptionHandling ->
-            exceptionHandling.authenticationEntryPoint(authEntryPointJwt))
-        .sessionManagement(sessionManagement ->
-            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            .anyRequest().authenticated()
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception 
+    {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOriginPatterns(Arrays.asList("*"));
+                config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                config.setAllowedHeaders(Arrays.asList("*"));
+                config.setAllowCredentials(true);
+                return config;
+            }))
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(authEntryPointJwt))
+            .sessionManagement(sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/teacher/**").hasRole("TEACHER")
+                .anyRequest().authenticated()
+            );
+        
+        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.headers(headers -> headers
+            .frameOptions(frameOptions -> frameOptions.disable())
+            .xssProtection(xss -> xss.disable())
         );
     
-    http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    http.headers(headers -> headers
-        .frameOptions(frameOptions -> frameOptions.disable())
-        .xssProtection(xss -> xss.disable())
-    );
-    
-    return http.build();
-}
+        return http.build();
+    }
 }

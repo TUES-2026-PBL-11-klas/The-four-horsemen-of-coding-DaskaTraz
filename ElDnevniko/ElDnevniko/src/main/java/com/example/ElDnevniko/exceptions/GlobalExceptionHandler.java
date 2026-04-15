@@ -127,4 +127,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(errorMessage));
     }
+    @ExceptionHandler(GradeNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleGradeNotFound(GradeNotFoundException e)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiResponse.error(e.getMessage()));
+    }
+    @ExceptionHandler(TeacherAccessDeniedException.class)
+    public ResponseEntity<ApiResponse<String>> handleTeacherAccessDenied(TeacherAccessDeniedException e)
+    {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(ApiResponse.error(e.getMessage()));
+    }
+    @ExceptionHandler(SubjectNotPresentInClassException.class)
+    public ResponseEntity<ApiResponse<String>> handleSubjectNotPresentInClass(SubjectNotPresentInClassException e)
+    {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.error(e.getMessage()));
+    }
 }

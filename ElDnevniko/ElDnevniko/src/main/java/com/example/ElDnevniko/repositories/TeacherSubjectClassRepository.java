@@ -15,6 +15,8 @@ public interface TeacherSubjectClassRepository extends JpaRepository<TeacherSubj
 
     List<TeacherSubjectClassEntity> findAllBySchoolClass_Id(int classId);
 
+    List<TeacherSubjectClassEntity> findAllByTeacher_IdAndSubject_Id(int teacherId, int subjectId);
+
     boolean existsByTeacherIdAndSubjectIdAndSchoolClassId(int teacherId, int subjectId, int classId);
     
     boolean existsBySubjectIdAndSchoolClassId(int subjectId, int classId);

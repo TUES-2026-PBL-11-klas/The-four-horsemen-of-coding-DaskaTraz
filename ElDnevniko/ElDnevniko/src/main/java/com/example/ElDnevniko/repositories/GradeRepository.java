@@ -13,7 +13,7 @@ public interface GradeRepository extends JpaRepository<GradeEntity, Integer>{
     List<GradeEntity> findAllByStudentId(int studentId);
 
     List<GradeEntity> findAllByStudentIdAndSubjectId(int studentId, int subjectId);
-
+    
     List<GradeEntity> findAllByTeacherId(int teacherId);
 
 }
