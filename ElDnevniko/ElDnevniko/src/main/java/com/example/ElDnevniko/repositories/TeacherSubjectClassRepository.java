@@ -23,5 +23,7 @@ public interface TeacherSubjectClassRepository extends JpaRepository<TeacherSubj
     
     @Query("SELECT tsc.schoolClass.id FROM TeacherSubjectClassEntity tsc WHERE tsc.subject.id = :subjectId")
     List<Integer> findOccupiedClassIdsBySubject(Integer subjectId);
+
+    void deleteByTeacherId(int teacherId);
     
 }

@@ -77,7 +77,7 @@ public class GradeRepositoryTest {
     @Test
     public void findGradesByStudentTest() {
         this.gradeRepository.save(TestEntityData.createTestGrade(savedStudent, savedTeacher, savedSubject));
-        List<GradeEntity> grades = this.gradeRepository.findAllByStudentId(savedStudent.getId());
+        List<GradeEntity> grades = this.gradeRepository.findAllByStudentIdOrderByCreatedAtAsc(savedStudent.getId());
         assertThat(grades).hasSize(1);
     }
 
@@ -93,7 +93,7 @@ public class GradeRepositoryTest {
     public void findGradesByStudentAndSubjectTest()
     {
         this.gradeRepository.save(TestEntityData.createTestGrade(savedStudent, savedTeacher, savedSubject));
-        List<GradeEntity> grades = this.gradeRepository.findAllByStudentIdAndSubjectId(savedStudent.getId(),
+        List<GradeEntity> grades = this.gradeRepository.findAllByStudentIdAndSubjectIdOrderByCreatedAtAsc(savedStudent.getId(),
                                                                                         savedSubject.getId());
         assertThat(grades).hasSize(1);
     }

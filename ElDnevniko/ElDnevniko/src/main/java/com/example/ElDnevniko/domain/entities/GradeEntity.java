@@ -1,5 +1,7 @@
 package com.example.ElDnevniko.domain.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,4 +45,6 @@ public class GradeEntity
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
+
+    private LocalDateTime createdAt;
 }

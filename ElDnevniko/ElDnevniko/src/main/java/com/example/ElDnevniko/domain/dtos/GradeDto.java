@@ -1,6 +1,8 @@
 package com.example.ElDnevniko.domain.dtos;
 
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +18,5 @@ public class GradeDto {
     private double value;
     private String subjectName;
     private String teacherName;
+    private LocalDateTime date;
 }

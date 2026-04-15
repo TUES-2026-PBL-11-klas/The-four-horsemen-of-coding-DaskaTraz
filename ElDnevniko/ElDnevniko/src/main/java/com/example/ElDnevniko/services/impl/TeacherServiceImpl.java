@@ -1,4 +1,5 @@
 package com.example.ElDnevniko.services.impl;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,8 @@ import com.example.ElDnevniko.domain.entities.StudentEntity;
 import com.example.ElDnevniko.domain.entities.SubjectEntity;
 import com.example.ElDnevniko.domain.entities.TeacherEntity;
 import com.example.ElDnevniko.domain.entities.TeacherSubjectClassEntity;
+import com.example.ElDnevniko.domain.entities.UserStatus;
+import com.example.ElDnevniko.exceptions.AccountNotActivatedException;
 import com.example.ElDnevniko.exceptions.GradeNotFoundException;
 import com.example.ElDnevniko.exceptions.InvalidUserDataException;
 import com.example.ElDnevniko.exceptions.SchoolClassNotFoundException;
@@ -32,6 +35,7 @@ import com.example.ElDnevniko.repositories.StudentRepository;
 import com.example.ElDnevniko.repositories.SubjectRepository;
 import com.example.ElDnevniko.repositories.TeacherRepository;
 import com.example.ElDnevniko.repositories.TeacherSubjectClassRepository;
+import com.example.ElDnevniko.services.StudentService;
 import com.example.ElDnevniko.services.TeacherService;
 
 @Service
@@ -46,6 +50,7 @@ public class TeacherServiceImpl implements TeacherService
     private GradeMapper gradeMapper;
     private SchoolClassMapper schoolClassMapper;
     private SubjectMapper subjectMapper;
+    private StudentService studentService;
 
     public TeacherServiceImpl(
             TeacherRepository teacherRepository,
@@ -56,7 +61,10 @@ public class TeacherServiceImpl implements TeacherService
             TeacherSubjectClassRepository tscRepository,
             GradeMapper gradeMapper,
             SchoolClassMapper schoolClassMapper,
-            SubjectMapper subjectMapper) {
+            SubjectMapper subjectMapper,
+            StudentService studentService
+        ) 
+        {
         this.teacherRepository = teacherRepository;
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
@@ -66,6 +74,7 @@ public class TeacherServiceImpl implements TeacherService
         this.gradeMapper = gradeMapper;
         this.schoolClassMapper = schoolClassMapper;
         this.subjectMapper = subjectMapper;
+        this.studentService = studentService;
     }
 
 
@@ -106,6 +115,11 @@ public class TeacherServiceImpl implements TeacherService
     {
         StudentEntity student = this.studentRepository.findById(studentId)
             .orElseThrow(() -> new UserNotFoundException("Student not found"));
+        if(!student.getUser().getStatus().equals(UserStatus.ACTIVE))
+        {
+            throw new AccountNotActivatedException("Student account is not activated");
+        }
+
         if(!this.subjectRepository.existsById(subjectId))
         {
             throw new SubjectNotFoundException("Subject not found");
@@ -116,7 +130,7 @@ public class TeacherServiceImpl implements TeacherService
         {
             throw new SubjectNotPresentInClassException("This student does not attend this subject.");
         }
-        List<GradeEntity> grades = gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId);
+        List<GradeEntity> grades = gradeRepository.findAllByStudentIdAndSubjectIdOrderByCreatedAtAsc(studentId, subjectId);
 
         double average = grades.stream()
                 .mapToDouble(GradeEntity::getValue)
@@ -182,11 +196,21 @@ public class TeacherServiceImpl implements TeacherService
         {
             throw new TeacherAccessDeniedException("You do not have permission to add a grade for this student in this subject.");
         }
+        if(!student.getUser().getStatus().equals(UserStatus.ACTIVE))
+        {
+            throw new AccountNotActivatedException("Student account is not activated");
+        }
+
         GradeEntity newGrade = gradeMapper.toEntity(createGradeDto);
         newGrade.setTeacher(teacher);
         newGrade.setStudent(student);
         newGrade.setSubject(subject);
+        newGrade.setCreatedAt(LocalDateTime.now());
         GradeEntity savedGrade = gradeRepository.save(newGrade);
+        if(this.studentService.isStudentGradeLow(student.getUser().getEmail(), subject.getSubjectName()))
+        {
+            this.studentService.sendEmailForLowGrades(student.getUser().getEmail(), subject.getSubjectName());
+        }
         return gradeMapper.toDto(savedGrade);
     }
     @Override
@@ -212,6 +236,10 @@ public class TeacherServiceImpl implements TeacherService
         }
         grade.setValue(value);
         GradeEntity updatedGrade = gradeRepository.save(grade);
+        if(this.studentService.isStudentGradeLow(grade.getStudent().getUser().getEmail(), grade.getSubject().getSubjectName()))
+        {
+            this.studentService.sendEmailForLowGrades(grade.getStudent().getUser().getEmail(), grade.getSubject().getSubjectName());
+        }
         return gradeMapper.toDto(updatedGrade);
     }
     

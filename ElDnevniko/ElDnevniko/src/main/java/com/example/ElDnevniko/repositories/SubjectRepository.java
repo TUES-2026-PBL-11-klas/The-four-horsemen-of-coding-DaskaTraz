@@ -15,4 +15,6 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity, Integer>
     boolean existsBySubjectName(String subjectName);
 
     List<SubjectEntity> findAllBySubjectAssignments_TeacherId(int teacherId);
+    
+    List<SubjectEntity> findAllBySubjectAssignments_SchoolClassId(int classId);
 }
