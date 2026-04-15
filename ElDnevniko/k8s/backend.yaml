@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-backend
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-api
+  template:
+    metadata:
+      labels:
+        app: spring-api
+    spec:
+      containers:
+      - name: spring-app
+        image: "vikt0rinho/backend:<git-sha>"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_URL
+          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/mydb"
+        - name: DB_PASSWORD
+          value: ""
