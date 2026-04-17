@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - VOT
+      - '*'
     # paths-ignore:
     #   - 'k8s/**' s
 jobs:
