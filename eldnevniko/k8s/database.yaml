@@ -19,7 +19,7 @@ spec:
         image: postgres:15 
         env:
         - name: DB_URL
-          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/mydb"
+          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/mydb" 
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
