@@ -47,7 +47,7 @@ jobs:
           IMAGE_TAG=${{ github.sha }}
           IMAGE_NAME=vikt0rinho/backend
           # Updates the manifest with the new image tag
-          sed -i -E "s#image: \"[^\"]+\"#image: \"$IMAGE_NAME:$IMAGE_TAG\"#" k8s/backend.yaml
+          sed -i -E "s#image: \"[^\"]+\"#image: \"$IMAGE_NAME:$IMAGE_TAG\"#" eldnevniko/k8s/backend.yaml
 
       - name: Commit updated manifests
         run: |
