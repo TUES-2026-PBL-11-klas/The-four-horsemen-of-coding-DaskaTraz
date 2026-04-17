@@ -24,8 +24,7 @@ jobs:
            distribution: 'temurin'
 
       - name: Build with Maven
-        working-directory: eldnevniko
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests -f eldnevniko/pom.xml
 
       - name: Run tests
         run: mvn test
