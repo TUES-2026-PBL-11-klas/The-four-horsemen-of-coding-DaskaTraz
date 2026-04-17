@@ -1,7 +1,7 @@
 INSERT INTO users (username, email, password_hash, role)
 VALUES
-('student1', 's1@mail.com', 'hash', 'student'),
-('teacher1', 't1@mail.com', 'hash', 'teacher');
+('student1', 's1@mail.com', 'hash', 'STUDENT'),
+('teacher1', 't1@mail.com', 'hash', 'TEACHER');
 
 INSERT INTO classes (name, graduation_year)
 VALUES ('11A', 2026);
