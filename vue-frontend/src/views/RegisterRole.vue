@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="card">
-      <h2>Избери роля</h2>
+      <h2>Choose Role</h2>
 
       <div class="role-buttons">
         <button
           :class="{ active: selectedRole === 'teacher' }"
           @click="selectRole('teacher')"
         >
-          Учител
+          Teacher
         </button>
 
         <button
@@ -18,7 +18,9 @@
           Ученик
         </button>
       </div>
-
+      <div v-if="message" :class="['message-box', isError ? 'error' : 'success']">
+        {{ message }}
+      </div>
       <button class="continue-btn" @click="goNext">
         Continue
       </button>
@@ -27,33 +29,57 @@
 </template>
 
 <script>
+import apiClient from '@/api/axios';
 export default {
   data() {
     return {
-      selectedRole: ""
+      selectedRole: "",
+      message: "",
+      isError: false
     };
   },
 
   methods: {
-    selectRole(role) {
+    selectRole(role)
+    {
       this.selectedRole = role;
     },
 
-    goNext() {
-      if (!this.selectedRole) {
-        alert("Моля избери роля!");
+    async goNext()
+    {
+      this.message = "";
+      this.isError = false;
+      if(!this.selectedRole)
+      {
+        this.message = "Please select a role to continue!";
+        this.isError = true;
         return;
       }
 
       // запазваме ролята временно
-      localStorage.setItem("role", this.selectedRole);
+      const payload = {
+        userId: localStorage.getItem("userId"),
+        userRole: this.selectedRole.toUpperCase()
+      };
 
       // навигация
-              if (this.selectedRole === "teacher") {
+      try{
+        await apiClient.post('/auth/choose-role', payload);
+        if(this.selectedRole === "teacher")
+        {
           this.$router.push("/teacher");
-        } else {
+        }
+        else
+        {
           this.$router.push("/student");
         }
+      }
+      catch(error)
+      {
+        console.error("Role selection failed:", error);
+        this.isError = true;
+        this.message = "Role selection failed. Please try again.";
+      }
     }
   }
 };
@@ -111,5 +137,23 @@ export default {
 
 .continue-btn:hover {
   background: #e14b50;
+}
+
+.message-box {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+}
+.error {
+  background-color: #ffe6e6;
+  color: #d9534f;
+  border: 1px solid #d9534f;
+}
+.success {
+  background-color: #e6ffe6;
+  color: #28a745;
+  border: 1px solid #28a745;
 }
 </style>
