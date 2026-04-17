@@ -39,9 +39,9 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_NAME=vikt0rinho/backend
-          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          docker build -f eldnevniko/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG eldnevniko
           docker push $IMAGE_NAME:$IMAGE_TAG
-
+      
       - name: Update backend image tag in manifest
         run: |
           IMAGE_TAG=${{ github.sha }}
