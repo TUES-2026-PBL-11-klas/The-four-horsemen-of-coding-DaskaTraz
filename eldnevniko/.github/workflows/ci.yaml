@@ -5,7 +5,7 @@ on:
     branches:
       - '*'
     # paths-ignore:
-    #   - 'k8s/**' s
+    #   - 'k8s/**'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
