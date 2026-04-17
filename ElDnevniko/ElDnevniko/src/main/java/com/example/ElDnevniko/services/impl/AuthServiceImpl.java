@@ -190,9 +190,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
 
     @Transactional
     @Override
-    public void validateRegisterToken(String email, String token)
+    public void validateRegisterToken(int userId, String token)
     {
-        UserEntity user = this.userRepository.findByEmail(email)
+        UserEntity user = this.userRepository.findById(userId)
         .orElseThrow(()->new UserNotFoundException("user not found"));
 
         EmailVerificationEntity emailVerification = this.emailValidationRepo.findByUser(user)
@@ -227,10 +227,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
     
     @Transactional
     @Override
-    public void sendVerificationEmail(String email)
+    public String sendVerificationEmail(int userId)
     {
          
-        UserEntity user = this.userRepository.findByEmail(email)
+        UserEntity user = this.userRepository.findById(userId)
         .orElseThrow(()-> new UserNotFoundException("user does not exist"));
         EmailVerificationEntity verification = this.emailValidationRepo.findByUser(user)
             .orElse(new EmailVerificationEntity(user));
@@ -249,7 +249,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
             MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
             helper.setFrom(new InternetAddress("kaloian3141@gmail.com", "Dazkatraz"));
-            helper.setTo(email);
+            helper.setTo(user.getEmail());
             helper.setSubject("Verification Code - Dazkatraz");
             helper.setText("<h2>Code: " + verification.getToken() + "</h2>" +
                 "<p> This code expires in 60 minutes </p>", true);
@@ -259,6 +259,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
         {
             throw new EmailSendException("Fail to send email to " + user.getEmail() + ":", e);
         }
+        return user.getEmail();
     }
 
     @Override

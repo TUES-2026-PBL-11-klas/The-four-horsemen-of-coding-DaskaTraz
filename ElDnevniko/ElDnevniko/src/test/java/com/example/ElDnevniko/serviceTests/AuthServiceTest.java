@@ -385,7 +385,7 @@ public class AuthServiceTest {
     {
         int userId = this.authService.registerUser(validUserDto);
  
-        assertDoesNotThrow(() -> this.authService.sendVerificationEmail("test@example.com"));
+        assertDoesNotThrow(() -> this.authService.sendVerificationEmail(userId));
  
         EmailVerificationEntity verification = emailVerificationRepository
                 .findByUser(this.userRepository.findById(userId).get())
@@ -399,19 +399,19 @@ public class AuthServiceTest {
     public void testSendVerificationEmailToNonexistentUser() 
     {
         assertThrows(UserNotFoundException.class,
-                () -> this.authService.sendVerificationEmail("nonexistent@example.com"));
+                () -> this.authService.sendVerificationEmail(999));
     }
  
     @Test
     public void testResendVerificationEmailReplacesToken() 
     {
         int userId = this.authService.registerUser(validUserDto);
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         UserEntity user = this.userRepository.findById(userId).get();
         String firstToken = emailVerificationRepository.findByUser(user).get().getToken();
  
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         String secondToken = emailVerificationRepository.findByUser(user).get().getToken();
  
@@ -423,12 +423,12 @@ public class AuthServiceTest {
     public void testValidateRegisterTokenSuccess() 
     {
         int userId = this.authService.registerUser(validUserDto);
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         UserEntity user = this.userRepository.findById(userId).get();
         String token = emailVerificationRepository.findByUser(user).get().getToken();
  
-        assertDoesNotThrow(() -> this.authService.validateRegisterToken("test@example.com", token));
+        assertDoesNotThrow(() -> this.authService.validateRegisterToken(userId, token));
  
         user = this.userRepository.findById(userId).get();
         assertEquals(UserStatus.ACTIVE, user.getStatus());
@@ -441,17 +441,17 @@ public class AuthServiceTest {
     public void testValidateRegisterTokenWithWrongToken() 
     {
         this.authService.registerUser(validUserDto);
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(1);
  
         assertThrows(InvalidTokenException.class,
-                () -> this.authService.validateRegisterToken("test@example.com", "WRONG_TOKEN"));
+                () -> this.authService.validateRegisterToken(1, "WRONG_TOKEN"));
     }
  
     @Test
     public void testValidateRegisterTokenExpired() 
     {
         int userId = this.authService.registerUser(validUserDto);
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         UserEntity user = this.userRepository.findById(userId).get();
         EmailVerificationEntity verification = emailVerificationRepository.findByUser(user).get();
@@ -460,21 +460,21 @@ public class AuthServiceTest {
         emailVerificationRepository.save(verification);
  
         assertThrows(TokenExpiredException.class,
-                () -> this.authService.validateRegisterToken("test@example.com", verification.getToken()));
+                () -> this.authService.validateRegisterToken(userId, verification.getToken()));
     }
  
     @Test
     public void testValidateRegisterTokenAlreadyVerified() 
     {
         int userId = this.authService.registerUser(validUserDto);
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         UserEntity user = this.userRepository.findById(userId).get();
         String token = emailVerificationRepository.findByUser(user).get().getToken();
-        this.authService.validateRegisterToken("test@example.com", token);
+        this.authService.validateRegisterToken(userId, token);
  
         assertThrows(VerificationAlreadyCompleteException.class,
-                () -> this.authService.validateRegisterToken("test@example.com", token));
+                () -> this.authService.validateRegisterToken(userId, token));
     }
  
     @Test
@@ -483,7 +483,7 @@ public class AuthServiceTest {
         this.authService.registerUser(validUserDto);
  
         assertThrows(VerificationTokenNotFoundException.class,
-                () -> this.authService.validateRegisterToken("test@example.com", "anytoken"));
+                () -> this.authService.validateRegisterToken(1, "anytoken"));
     }
  
     @Test
@@ -499,12 +499,12 @@ public class AuthServiceTest {
  
         StudentEntity student = this.authService.registerStudent(studentDto);
         assertEquals(-1, student.getNumberInClass());
-        this.authService.sendVerificationEmail("test@example.com");
+        this.authService.sendVerificationEmail(userId);
  
         UserEntity user = this.userRepository.findById(userId).get();
         String token = emailVerificationRepository.findByUser(user).get().getToken();
  
-        this.authService.validateRegisterToken("test@example.com", token);
+        this.authService.validateRegisterToken(userId, token);
  
         StudentEntity verifiedStudent = studentRepository.findByUser(user).get();
         assertNotEquals(-1, verifiedStudent.getNumberInClass());

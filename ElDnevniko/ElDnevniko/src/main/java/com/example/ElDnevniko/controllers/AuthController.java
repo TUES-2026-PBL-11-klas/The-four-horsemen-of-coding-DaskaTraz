@@ -57,7 +57,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<String>> registerStudent(@Valid @RequestBody StudentRegisterDto studentDto)
     {
         StudentEntity saveStudent = this.authService.registerStudent(studentDto);
-        this.authService.sendVerificationEmail(saveStudent.getUser().getEmail());
+        this.authService.sendVerificationEmail(saveStudent.getUser().getId());
         return ResponseEntity.ok(ApiResponse.success("Student Account created successfuly. verify email", saveStudent.getUser().getEmail()));
     }
 
@@ -65,7 +65,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<String>> registerTeacher(@Valid @RequestBody TeacherRegisterDto teacherDto)
     {
         TeacherEntity saveTeacher = this.authService.registerTeacher(teacherDto);
-        this.authService.sendVerificationEmail(saveTeacher.getUser().getEmail());
+        this.authService.sendVerificationEmail(saveTeacher.getUser().getId());
         return ResponseEntity.ok(ApiResponse.success("Teacher Account created successfuly. verify email", saveTeacher.getUser().getEmail()));
     }
 
@@ -89,17 +89,17 @@ public class AuthController {
     }
 
     @PostMapping("/send-email-verification")
-    public ResponseEntity<ApiResponse<String>> sendVerification(@Valid @RequestParam String email)
+    public ResponseEntity<ApiResponse<String>> sendVerification(@Valid @RequestParam int userId)
     {
-        this.authService.sendVerificationEmail(email);
+        String email =this.authService.sendVerificationEmail(userId);
         return ResponseEntity.ok(ApiResponse.success("Verification code send successfully", email));
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<ApiResponse<String>> verifyUser(@Valid @RequestParam String email,
+    public ResponseEntity<ApiResponse<String>> verifyUser(@Valid @RequestParam int userId,
                                                           @Valid @RequestParam String token)
     {
-        this.authService.validateRegisterToken(email, token);
+        this.authService.validateRegisterToken(userId, token);
         return ResponseEntity.ok(ApiResponse.success("Account validated.", null));
     }
 
