@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'VOT'
+    paths-ignore:
+      - k8s/**'  
 
 jobs:
   build-and-deploy:
@@ -46,7 +48,6 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_NAME=vikt0rinho/backend
-          # Updates the manifest with the new image tag
           sed -i -E "s#image: \"[^\"]+\"#image: \"$IMAGE_NAME:$IMAGE_TAG\"#" eldnevniko/k8s/backend.yaml
 
       - name: Commit updated manifests
@@ -55,7 +56,6 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add eldnevniko/k8s/backend.yaml
-          # Only commit if there are actual changes
           if git diff --cached --quiet; then
             echo "No manifest change to commit"
           else
