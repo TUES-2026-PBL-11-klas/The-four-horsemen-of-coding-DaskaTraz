@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - VOT
-    paths-ignore:
-      - 'k8s/**'
-
+    # paths-ignore:
+    #   - 'k8s/**'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
