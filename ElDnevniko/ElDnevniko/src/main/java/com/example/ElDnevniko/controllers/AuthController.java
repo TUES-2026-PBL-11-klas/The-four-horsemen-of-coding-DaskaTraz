@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -120,12 +121,24 @@ public class AuthController {
                                                     jwtUtils.generateToken(userDetails)));
         }
         catch(BadCredentialsException e) 
-        {   
+        {
             throw new InvalidCredentialsException("Invalid email or password");
         } 
         catch(DisabledException e) 
         {
             throw new AccountNotActivatedException("Account not verified. Please verify your email");
+        } 
+        catch(InternalAuthenticationServiceException e) 
+        {
+            if(e.getCause() instanceof AccountNotActivatedException) 
+            {
+                throw (AccountNotActivatedException) e.getCause();
+            }
+            throw new RuntimeException("Authentication service error");
+        } 
+        catch(Exception e) 
+        {
+            throw new RuntimeException("An unexpected error occurred: " + e.getMessage());
         }
     }
 }

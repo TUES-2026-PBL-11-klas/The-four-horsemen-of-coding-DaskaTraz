@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountNotActivatedException.class)
     public ResponseEntity<ApiResponse<String>> handleNotActivated(AccountNotActivatedException exception) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error(exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(exception.getMessage()));
     }
 
     @ExceptionHandler(TokenExpiredException.class)

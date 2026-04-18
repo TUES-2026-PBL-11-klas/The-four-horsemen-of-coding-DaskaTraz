@@ -278,7 +278,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
-
+        if(user.getStatus() != UserStatus.ACTIVE) 
+        {
+            throw new AccountNotActivatedException("User account is not active");
+        }
         return User
                 .withUsername(user.getEmail())
                 .password(user.getHashPassword())
