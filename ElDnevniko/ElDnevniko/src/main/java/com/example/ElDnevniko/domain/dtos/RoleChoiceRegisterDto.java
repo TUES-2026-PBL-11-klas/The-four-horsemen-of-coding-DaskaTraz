@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RoleChoiceRegisterDto {
     @NotNull(message = "User ID is required")
-    private int userId;
+    private Integer userId;
+    @NotNull(message = "User role is required")
     private UserRole userRole;
 }

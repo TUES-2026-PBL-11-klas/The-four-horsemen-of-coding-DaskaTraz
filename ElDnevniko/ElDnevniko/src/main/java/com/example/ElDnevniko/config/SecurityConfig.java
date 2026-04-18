@@ -29,7 +29,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception
     {
         return authConfig.getAuthenticationManager();
     }
@@ -61,7 +61,6 @@ public class SecurityConfig {
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.headers(headers -> headers
             .frameOptions(frameOptions -> frameOptions.disable())
-            .xssProtection(xss -> xss.disable())
         );
     
         return http.build();

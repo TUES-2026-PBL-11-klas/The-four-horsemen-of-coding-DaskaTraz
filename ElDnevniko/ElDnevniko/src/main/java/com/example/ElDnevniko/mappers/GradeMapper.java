@@ -22,6 +22,6 @@ public interface GradeMapper {
     @Mapping(target = "subject", ignore = true)
     @Mapping(target = "teacher", ignore = true)
     @Mapping(target = "student", ignore = true)
-    @Mapping(target = "createdAt", constant = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "createdAt", ignore = true)
     public GradeEntity toEntity(CreateGradeDto dto);
 }

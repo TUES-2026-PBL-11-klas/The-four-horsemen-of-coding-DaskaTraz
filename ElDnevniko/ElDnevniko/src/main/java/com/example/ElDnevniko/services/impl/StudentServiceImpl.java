@@ -181,10 +181,25 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public boolean isStudentGradeLow(String email, String subjectName) 
     {
-        StudentGradeRowDto studentGradeRowDto = getStudentGradesAtSubject(email, subjectRepository.findBySubjectName(subjectName)
-            .orElseThrow(() -> new SubjectNotFoundException("Subject not found")).getId());
-        return studentGradeRowDto.getAverageGrade() < 3.0;
+        StudentEntity student = studentRepository.findByUserEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("Student not found"));
+        SubjectEntity subject = subjectRepository.findBySubjectName(subjectName)
+                .orElseThrow(() -> new SubjectNotFoundException("Subject not found"));
+        
+        List<GradeEntity> grades = gradeRepository
+                .findAllByStudentIdAndSubjectIdOrderByCreatedAtAsc(
+                    student.getId(), subject.getId());
+        
+        if(grades.isEmpty()) return false;
+        
+        double average = grades.stream()
+                .mapToDouble(GradeEntity::getValue)
+                .average()
+                .orElse(6.0);
+        
+        return average < 3.0;
     }
+    
     private void validateStudentAuthority(String email) 
     {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();

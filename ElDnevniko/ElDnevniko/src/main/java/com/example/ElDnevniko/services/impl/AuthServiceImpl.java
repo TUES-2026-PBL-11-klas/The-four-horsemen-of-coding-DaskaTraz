@@ -115,6 +115,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
     {
         UserEntity user = this.userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException("this user does not exist"));
+        if(user.getStatus() != UserStatus.PROFILE_INCOMPLETE)
+        {
+            throw new InvalidUserDataException("User have already choosed a role");
+        }
         user.setRole(role);
         UserEntity savedUser = this.userRepository.save(user);
         return savedUser.getId();
@@ -305,7 +309,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService
         
         List<SchoolClassEntity> availableClasses;
         
-        if(occupiedClassIds.isEmpty()) 
+        if(occupiedClassIds == null || occupiedClassIds.isEmpty()) 
         {
             availableClasses = this.schoolClassRepository.findAll();
         } 

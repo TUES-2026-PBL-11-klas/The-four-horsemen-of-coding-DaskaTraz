@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TeacherSubjectRegisterDto {
     @NotNull(message = "subject Id required")
-    private int subjectId;
+    private Integer subjectId;
     @NotNull(message = "class Id required")
     private List<Integer> classIds;
 }

@@ -37,6 +37,7 @@ import com.example.ElDnevniko.repositories.TeacherRepository;
 import com.example.ElDnevniko.repositories.TeacherSubjectClassRepository;
 import com.example.ElDnevniko.services.StudentService;
 import com.example.ElDnevniko.services.TeacherService;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TeacherServiceImpl implements TeacherService 
@@ -146,6 +147,7 @@ public class TeacherServiceImpl implements TeacherService
         return studentGradeRowDto;
     }
 
+    @Transactional
     @Override
     public ClassDiaryDto getClassGradesAtSubject(String email, int classId, int subjectId) 
     {
@@ -158,28 +160,32 @@ public class TeacherServiceImpl implements TeacherService
         
         SubjectEntity subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new SubjectNotFoundException("Subject not found"));
-        boolean hasAccess = tscRepository.existsByTeacherIdAndSubjectIdAndSchoolClassId(teacher.getId(), subjectId, classId);
+
+        boolean hasAccess = tscRepository.existsByTeacherIdAndSubjectIdAndSchoolClassId(
+            teacher.getId(), subjectId, classId);
         if(!hasAccess) 
-        {
             throw new TeacherAccessDeniedException("You do not have permission to view this class for this subject."); 
-        }
-        List<StudentEntity> students = this.studentRepository.findAllBySchoolClassIdOrderByNumberInClassAsc(classId);
+
+        List<StudentEntity> students = this.studentRepository
+            .findAllBySchoolClassIdOrderByNumberInClassAsc(classId);
         
         List<StudentGradeRowDto> studentRows = students.stream()
-                .map(student -> getStudentGradesAtSubject(student.getId(), subjectId))
-                .toList();
-            double classAvg = studentRows.stream()
-                .mapToDouble(StudentGradeRowDto::getAverageGrade)
-                .average()
-                .orElse(2.0);
+            .filter(s -> s.getUser().getStatus().equals(UserStatus.ACTIVE))
+            .map(student -> getStudentGradesAtSubject(student.getId(), subjectId))
+            .toList();
 
-        ClassDiaryDto classDiary = ClassDiaryDto.builder()
+        double classAvg = studentRows.stream()
+            .mapToDouble(StudentGradeRowDto::getAverageGrade)
+            .average()
+            .orElse(2.0);
+
+        return ClassDiaryDto.builder()
                 .schoolClass(schoolClassMapper.toDto(schoolClass))
                 .subjectName(subject.getSubjectName())
                 .students(studentRows)
                 .classAverage(classAvg)
                 .build();
-        return classDiary;
+
     }
 
     @Override

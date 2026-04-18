@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StudentRegisterDto{
     @NotNull(message = "user Id is required")
-    private int userId;
+    private Integer userId;
     @NotNull(message = "school class Id is required")
-    private int schoolClassId;
+    private Integer schoolClassId;
 }
