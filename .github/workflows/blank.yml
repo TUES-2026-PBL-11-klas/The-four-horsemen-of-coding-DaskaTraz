@@ -5,7 +5,7 @@ on:
     branches:
       - 'VOT'
     paths-ignore:
-      - k8s/**'  
+      - eldnevniko/k8s/**'  
 
 jobs:
   build-and-deploy:
