@@ -1,8 +1,0 @@
-package com.example.ElDnevniko.exceptions;
-
-public class TokenExpiredException extends RuntimeException{
-    public TokenExpiredException(String message)
-    {
-        super(message);
-    }
-}
