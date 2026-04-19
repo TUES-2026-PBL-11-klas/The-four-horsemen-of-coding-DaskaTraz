@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web-ui
-        image: "vikt0rinho/frontend:<git-sha>"
+        image: "vikt0rinho/frontend:ffeab9cb3efc508319ca332fb66187c063fd0944"
         ports:
         - containerPort: 80
 ---
