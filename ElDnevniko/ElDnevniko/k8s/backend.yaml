@@ -16,7 +16,7 @@ spec:
       containers:
       - name: spring-app
 <<<<<<< HEAD
-        image: "ghcr.io/tues-2026-pbl-11-klas/the-four-horsemen-of-coding-daskatraz/backend:<git-sha>" 
+        image: "vikt0rinho/backend:d6d2b2e1bed859afe7c38895cf99ffb90cf9ed81" 
 >>>>>>> b521455 (trying to update images via git hub container registry)
         ports:
         - containerPort: 8080
