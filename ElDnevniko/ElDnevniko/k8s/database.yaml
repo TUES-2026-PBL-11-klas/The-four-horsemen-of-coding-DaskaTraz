@@ -4,8 +4,8 @@ metadata:
   name: postgres-db
   namespace: database
 spec:
-  serviceName: "postgres-service" 
-  replicas: 3
+  serviceName: "postgres-service"
+  replicas: 1
   selector:
     matchLabels:
       app: postgres
@@ -16,14 +16,16 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:15 
+        image: postgres:15
         env:
-        - name: DB_URL
-          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/mydb" 
-        - name: DB_PASSWORD
+        - name: POSTGRES_DB
+          value: "mydb"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret  
+              name: db-secret
               key: password
         ports:
         - containerPort: 5432
