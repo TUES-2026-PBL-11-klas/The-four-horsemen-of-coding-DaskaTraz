@@ -43,7 +43,6 @@ import com.example.ElDnevniko.repositories.EmailVerificationRepository;
 import com.example.ElDnevniko.repositories.SchoolClassRepository;
 import com.example.ElDnevniko.repositories.StudentRepository;
 import com.example.ElDnevniko.repositories.SubjectRepository;
-import com.example.ElDnevniko.repositories.TeacherRepository;
 import com.example.ElDnevniko.repositories.UserRepository;
 import com.example.ElDnevniko.services.AuthService;
 import com.example.ElDnevniko.testUtils.TestDtoData;
@@ -63,9 +62,6 @@ public class AuthServiceTest {
  
     @Autowired
     private StudentRepository studentRepository;
- 
-    @Autowired
-    private TeacherRepository teacherRepository;
  
     @Autowired
     private SchoolClassRepository schoolClassRepository;

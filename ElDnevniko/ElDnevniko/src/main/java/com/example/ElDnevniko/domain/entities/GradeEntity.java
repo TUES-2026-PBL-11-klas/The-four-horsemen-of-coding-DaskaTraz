@@ -30,7 +30,7 @@ public class GradeEntity
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     
-    @Column(name = "grade_value")
+    @Column(name = "value")
     private double value;
 
     @ManyToOne
