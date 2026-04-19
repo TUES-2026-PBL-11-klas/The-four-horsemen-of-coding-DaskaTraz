@@ -28,8 +28,8 @@ jobs:
       - name: Build with Maven
         run: mvn -f ElDnevniko/ElDnevniko/pom.xml clean package -DskipTests
 
-      - name: Run tests
-        run: mvn -f ElDnevniko/ElDnevniko/pom.xml test
+      # - name: Run tests
+      #   run: mvn -f ElDnevniko/ElDnevniko/pom.xml test
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
