@@ -1,20 +1,27 @@
 package com.example.ElDnevniko.domain.entities;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,4 +37,12 @@ public class StudentEntity {
 
     @Column(name = "number_in_class")
     private int numberInClass;
+
+    @OneToMany(mappedBy = "student")      
+    private Set<GradeEntity> grades;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    @ToString.Exclude
+    private SchoolClassEntity schoolClass;
 }

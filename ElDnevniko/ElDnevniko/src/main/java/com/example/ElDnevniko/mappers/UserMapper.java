@@ -9,6 +9,8 @@ import com.example.ElDnevniko.domain.entities.UserEntity;
 public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "hashPassword", source = "password")
-    @Mapping(target = "status", constant = "NOTVERIFIED")
+    @Mapping(target = "status", constant = "PROFILE_INCOMPLETE")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "role", constant = "NOTPROVIDED")
     public UserEntity toEntity(UserRegisterDto userDto);
 } 
