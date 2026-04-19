@@ -15,9 +15,12 @@ spec:
     spec:
       containers:
       - name: web-ui
-        image: "vikt0rinho/frontend:1e22a2ac16a70b1b7bcdc73a1b9e55e8f372d2df"
+        image: "vikt0rinho/frontend:placeholder"
         ports:
         - containerPort: 80
+        env:
+        - name: VITE_API_BASE_URL
+          value: "http://localhost/api"
 ---
 apiVersion: v1
 kind: Service

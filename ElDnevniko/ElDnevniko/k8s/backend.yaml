@@ -15,11 +15,29 @@ spec:
     spec:
       containers:
       - name: spring-app
-        image: "vikt0rinho/backend:1e22a2ac16a70b1b7bcdc73a1b9e55e8f372d2df"
+        image: "vikt0rinho/backend:placeholder"
         ports:
         - containerPort: 8080
         env:
-        - name: DB_URL
-          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/mydb"
-        - name: DB_PASSWORD
-          value: ""
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/eldnevniko"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-backend-service
+  namespace: backend
+spec:
+  selector:
+    app: spring-api
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP

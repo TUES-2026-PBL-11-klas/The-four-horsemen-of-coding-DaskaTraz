@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  
     permissions:
       contents: write
 
@@ -72,3 +72,4 @@ jobs:
 
     #never mind
     #really...don't mind it
+    #fugg this is just a blank file to trigger the workflow on push to VOT branch, since the workflow is configured to ignore changes in k8s manifests, which are the only files that get changed on push to VOT branch.
