@@ -23,7 +23,7 @@
 
 <script>
 import apiClient from '@/api/axios';
-
+import {jwtDecode} from "jwt-decode";
 export default {
   data() {
     return {
@@ -34,7 +34,7 @@ export default {
     };
   },
   methods: {
-    async loginUser()
+async loginUser()
     {
       this.message = "";
       this.isError = false;
@@ -47,17 +47,44 @@ export default {
 
         const response = await apiClient.post('/auth/login', payload);
 
-        const token = response.data.token || response.data.data?.token || response.data;
-
+        const token = response.data.data;
         localStorage.setItem("token", token);
+        const decoded = jwtDecode(token);
 
-        this.$router.push("/");
+        const rawRole = decoded.role;
+
+        const userRole = rawRole.replace('ROLE_', '');
+
+        if(userRole == "STUDENT")
+        {
+          this.$router.push("/studentDashboard");
+        }
+        else if(userRole == "TEACHER")
+        {
+          this.$router.push("/teacherDashboard");
+        }
       }
-      catch (error)
+      catch(error)
       {
         console.error("Login Error:", error);
         this.isError = true;
-        this.message = "Wrong email or password!";
+        if(error.response)
+        {
+          const backendMessage = error.response.data.message;
+
+          if(backendMessage && error.response.status === 401)
+          {
+            this.message = "Your account is not activated. Please confirm your email!";
+          }
+          else
+          {
+            this.message = "Wrong email or password";
+          }
+        }
+        else
+        {
+          this.message = "An error occurred while connecting to the server.";
+        }
       }
     }
   }
@@ -67,57 +94,92 @@ export default {
 <style scoped>
 .container {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #1e3c72, #2a5298);
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .card {
   background: white;
-  padding: 30px;
-  border-radius: 10px;
-  width: 350px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-input {
+  padding: 40px;
+  border-radius: 16px;
   width: 100%;
-  padding: 10px;
-  margin: 10px 0 20px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  max-width: 450px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  box-sizing: border-box;
 }
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-.links {
-  margin-top: 15px;
+
+h2 {
+  color: #333;
   text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 600;
   font-size: 14px;
 }
 
+input, select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #1e3c72;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
 
 .message-box {
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 6px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 500;
 }
-.error {
-  background-color: #ffe6e6;
-  color: #d9534f;
-  border: 1px solid #d9534f;
+
+.error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+.links {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
 }
-.success {
-  background-color: #e6ffe6;
-  color: #28a745;
-  border: 1px solid #28a745;
-}
+
+.links a { color: #1e3c72; text-decoration: none; font-weight: bold; }
 </style>

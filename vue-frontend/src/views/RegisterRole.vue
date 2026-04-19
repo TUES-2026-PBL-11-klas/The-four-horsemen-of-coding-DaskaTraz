@@ -15,7 +15,7 @@
           :class="{ active: selectedRole === 'student' }"
           @click="selectRole('student')"
         >
-          Ученик
+          Student
         </button>
       </div>
       <div v-if="message" :class="['message-box', isError ? 'error' : 'success']">
@@ -56,14 +56,13 @@ export default {
         return;
       }
 
-      // запазваме ролята временно
       const payload = {
         userId: localStorage.getItem("userId"),
         userRole: this.selectedRole.toUpperCase()
       };
 
-      // навигация
-      try{
+      try
+      {
         await apiClient.post('/auth/choose-role', payload);
         if(this.selectedRole === "teacher")
         {
@@ -100,6 +99,7 @@ export default {
   border-radius: 15px;
   width: 400px;
   text-align: center;
+  color: black;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 

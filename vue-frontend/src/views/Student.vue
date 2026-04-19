@@ -2,19 +2,19 @@
   <div class="container">
     <div class="card">
       <h2>Student Information</h2>
-
       <form @submit.prevent="finish">
-        <label>Grade</label>
+        <label>Choose your class</label>
         <select v-model="selectedClassId" required>
-          <option value="" disabled>Choose grade...</option>
+          <option value="" disabled>Choose from the list...</option>
           <option v-for="c in availableClasses" :key="c.id" :value="c.id">
-            {{  c.className }}
+            {{ c.className }}
           </option>
         </select>
+
         <div v-if="message" :class="['message-box', isError ? 'error' : 'success']">
           {{ message }}
         </div>
-        <button type="submit">Finish</button>
+        <button type="submit">Finish Registration</button>
       </form>
     </div>
   </div>
@@ -78,44 +78,24 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #36d1dc, #5b86e5);
-}
-
-.card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 400px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-input, select {
+.container { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #36d1dc, #5b86e5); font-family: 'Segoe UI', sans-serif; }
+.card { background: white; padding: 40px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+h2 { color: #000; text-align: center; margin-bottom: 25px; }
+label { display: block; color: #000; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+select {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 12px;
+  margin-bottom: 25px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  color: #000;
+  font-size: 15px;
+  background-color: #fff;
 }
-
-
-.message-box {
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
+button {
+  width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;
 }
-.error {
-  background-color: #ffe6e6;
-  color: #d9534f;
-  border: 1px solid #d9534f;
-}
-.success {
-  background-color: #e6ffe6;
-  color: #28a745;
-  border: 1px solid #28a745;
-}
+.message-box { padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center; font-weight: bold; }
+.error { background-color: #ffe6e6; color: #d9534f; border: 1px solid #d9534f; }
+.success { background-color: #e6ffe6; color: #28a745; border: 1px solid #28a745; }
 </style>
