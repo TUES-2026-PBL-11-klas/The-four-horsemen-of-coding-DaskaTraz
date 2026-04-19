@@ -5,13 +5,13 @@ import Student from '../views/Student.vue'
 import Teacher from '../views/Teacher.vue'
 import Login from '../views/Login.vue'
 import EmailVerify from '../views/EmailVerify.vue'
-import TeacherDashboard from '../views/TeacherDashBoard.vue'
-import StudentDashBoard from '../views/StudentDashBoard.vue'
+import TeacherDashboard from '../views/TeacherDashboard.vue'
+import StudentDashboard from '../views/StudentDashboard.vue'
 import { jwtDecode } from "jwt-decode";
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/teacherDashboard', component: TeacherDashboard, meta: { requiresAuth: true , requiresRole: 'ROLE_TEACHER'} },
-  { path: '/studentDashboard', component: StudentDashBoard, meta: { requiresAuth: true, requiresRole: 'ROLE_STUDENT' }},
+  { path: '/studentDashboard', component: StudentDashboard, meta: { requiresAuth: true, requiresRole: 'ROLE_STUDENT' }},
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/role', component: RegisterRole, beforeEnter: () => {
