@@ -15,6 +15,8 @@ INSERT INTO subjects (name)
 VALUES 
 ('Math'),
 ('Physics'),
+('VOT'),
+('Database'),
 ('Chemistry'),
 ('Biology'),
 ('History'),
@@ -27,6 +29,7 @@ VALUES
 ('Psychology'),
 ('Civics'),
 ('Informatics'),
+('OOP'),
 ('Programming'),
 ('Art'),
 ('Music'),
