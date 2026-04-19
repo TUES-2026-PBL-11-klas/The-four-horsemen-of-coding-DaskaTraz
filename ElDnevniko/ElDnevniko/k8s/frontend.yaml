@@ -15,7 +15,9 @@ spec:
     spec:
       containers:
       - name: web-ui
-        image: "vikt0rinho/frontend:ffeab9cb3efc508319ca332fb66187c063fd0944"
+<<<<<<< HEAD
+        image: "ghcr.io/tues-2026-pbl-11-klas/the-four-horsemen-of-coding-daskatraz/frontend:<git-sha>"
+>>>>>>> b521455 (trying to update images via git hub container registry)
         ports:
         - containerPort: 80
 ---
