@@ -1,0 +1,1414 @@
+뿯붿--
+
+-- PostgreSQL database dump
+
+--
+
+
+
+\restrict 5lgqzYw0DJ8McEvzty0yfa8VFMWQCNDONI9RJIyEB4CIFYSI92f5oIhZYtnX7PT
+
+
+
+-- Dumped from database version 18.2
+
+-- Dumped by pg_dump version 18.2
+
+
+
+SET statement_timeout = 0;
+
+SET lock_timeout = 0;
+
+SET idle_in_transaction_session_timeout = 0;
+
+SET transaction_timeout = 0;
+
+SET client_encoding = 'UTF8';
+
+SET standard_conforming_strings = on;
+
+SELECT pg_catalog.set_config('search_path', '', false);
+
+SET check_function_bodies = false;
+
+SET xmloption = content;
+
+SET client_min_messages = warning;
+
+SET row_security = off;
+
+
+
+--
+
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+
+--
+
+
+
+-- *not* creating schema, since initdb creates it
+
+
+
+
+
+--
+
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+
+--
+
+
+
+COMMENT ON SCHEMA public IS '';
+
+
+
+
+
+SET default_tablespace = '';
+
+
+
+SET default_table_access_method = heap;
+
+
+
+--
+
+-- Name: classes; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.classes (
+
+    id integer NOT NULL,
+
+    name character varying(10) NOT NULL,
+
+    graduation_year integer NOT NULL
+
+);
+
+
+
+
+
+--
+
+-- Name: classes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.classes_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.classes_id_seq OWNED BY public.classes.id;
+
+
+
+
+
+--
+
+-- Name: email_verifications; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.email_verifications (
+
+    id integer NOT NULL,
+
+    user_id integer NOT NULL,
+
+    token text NOT NULL,
+
+    verified boolean DEFAULT false,
+
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+);
+
+
+
+
+
+--
+
+-- Name: email_verifications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.email_verifications_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: email_verifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.email_verifications_id_seq OWNED BY public.email_verifications.id;
+
+
+
+
+
+--
+
+-- Name: grades; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.grades (
+
+    id integer NOT NULL,
+
+    value numeric(3,2),
+
+    student_id integer NOT NULL,
+
+    subject_id integer NOT NULL,
+
+    teacher_id integer NOT NULL,
+
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT grades_value_check CHECK (((value >= (2)::numeric) AND (value <= (6)::numeric)))
+
+);
+
+
+
+
+
+--
+
+-- Name: grades_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.grades_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: grades_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.grades_id_seq OWNED BY public.grades.id;
+
+
+
+
+
+--
+
+-- Name: lesson_details; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.lesson_details (
+
+    id integer NOT NULL,
+
+    timetable_id integer,
+
+    lesson_type character varying(20),
+
+    description text
+
+);
+
+
+
+
+
+--
+
+-- Name: lesson_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.lesson_details_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: lesson_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.lesson_details_id_seq OWNED BY public.lesson_details.id;
+
+
+
+
+
+--
+
+-- Name: students; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.students (
+
+    id integer NOT NULL,
+
+    user_id integer NOT NULL,
+
+    class_id integer NOT NULL,
+
+    number_in_class integer NOT NULL
+
+);
+
+
+
+
+
+--
+
+-- Name: students_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.students_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
+
+
+
+
+
+--
+
+-- Name: subjects; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.subjects (
+
+    id integer NOT NULL,
+
+    name character varying(100) NOT NULL
+
+);
+
+
+
+
+
+--
+
+-- Name: subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.subjects_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.subjects_id_seq OWNED BY public.subjects.id;
+
+
+
+
+
+--
+
+-- Name: teachers; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.teachers (
+
+    id integer NOT NULL,
+
+    user_id integer NOT NULL
+
+);
+
+
+
+
+
+--
+
+-- Name: teachers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.teachers_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: teachers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.teachers_id_seq OWNED BY public.teachers.id;
+
+
+
+
+
+--
+
+-- Name: teachers_subjects; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.teachers_subjects (
+
+    id integer NOT NULL,
+
+    teacher_id integer NOT NULL,
+
+    subject_id integer NOT NULL,
+
+    class_id integer NOT NULL
+
+);
+
+
+
+
+
+--
+
+-- Name: teachers_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.teachers_subjects_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: teachers_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.teachers_subjects_id_seq OWNED BY public.teachers_subjects.id;
+
+
+
+
+
+--
+
+-- Name: timetable; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.timetable (
+
+    id integer NOT NULL,
+
+    class_id integer NOT NULL,
+
+    subject_id integer NOT NULL,
+
+    teacher_id integer NOT NULL,
+
+    day_of_week integer,
+
+    lesson_number integer,
+
+    start_at time without time zone,
+
+    duration_minutes integer,
+
+    CONSTRAINT timetable_day_of_week_check CHECK (((day_of_week >= 1) AND (day_of_week <= 7)))
+
+);
+
+
+
+
+
+--
+
+-- Name: timetable_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.timetable_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: timetable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.timetable_id_seq OWNED BY public.timetable.id;
+
+
+
+
+
+--
+
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE TABLE public.users (
+
+    id integer NOT NULL,
+
+    username character varying(50) NOT NULL,
+
+    email character varying(100) NOT NULL,
+
+    password_hash text NOT NULL,
+
+    role character varying(20) NOT NULL,
+
+    status character varying(20) DEFAULT 'active'::character varying,
+
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT users_role_check CHECK (((role)::text = ANY (ARRAY[('STUDENT'::character varying)::text, ('TEACHER'::character varying)::text, ('ADMIN'::character varying)::text, ('NOTPROVIDED'::character varying)::text])))
+
+);
+
+
+
+
+
+--
+
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+
+--
+
+
+
+CREATE SEQUENCE public.users_id_seq
+
+    AS integer
+
+    START WITH 1
+
+    INCREMENT BY 1
+
+    NO MINVALUE
+
+    NO MAXVALUE
+
+    CACHE 1;
+
+
+
+
+
+--
+
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+
+--
+
+
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+
+
+
+--
+
+-- Name: classes id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.classes ALTER COLUMN id SET DEFAULT nextval('public.classes_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: email_verifications id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.email_verifications ALTER COLUMN id SET DEFAULT nextval('public.email_verifications_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: grades id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.grades ALTER COLUMN id SET DEFAULT nextval('public.grades_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: lesson_details id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.lesson_details ALTER COLUMN id SET DEFAULT nextval('public.lesson_details_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: students id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.students ALTER COLUMN id SET DEFAULT nextval('public.students_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: subjects id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.subjects ALTER COLUMN id SET DEFAULT nextval('public.subjects_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: teachers id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers ALTER COLUMN id SET DEFAULT nextval('public.teachers_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: teachers_subjects id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects ALTER COLUMN id SET DEFAULT nextval('public.teachers_subjects_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: timetable id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.timetable ALTER COLUMN id SET DEFAULT nextval('public.timetable_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+
+
+
+--
+
+-- Name: classes classes_name_graduation_year_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.classes
+
+    ADD CONSTRAINT classes_name_graduation_year_key UNIQUE (name, graduation_year);
+
+
+
+
+
+--
+
+-- Name: classes classes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.classes
+
+    ADD CONSTRAINT classes_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: email_verifications email_verifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.email_verifications
+
+    ADD CONSTRAINT email_verifications_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: email_verifications email_verifications_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.email_verifications
+
+    ADD CONSTRAINT email_verifications_user_id_key UNIQUE (user_id);
+
+
+
+
+
+--
+
+-- Name: grades grades_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.grades
+
+    ADD CONSTRAINT grades_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: lesson_details lesson_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.lesson_details
+
+    ADD CONSTRAINT lesson_details_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: lesson_details lesson_details_timetable_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.lesson_details
+
+    ADD CONSTRAINT lesson_details_timetable_id_key UNIQUE (timetable_id);
+
+
+
+
+
+--
+
+-- Name: students students_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.students
+
+    ADD CONSTRAINT students_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: students students_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.students
+
+    ADD CONSTRAINT students_user_id_key UNIQUE (user_id);
+
+
+
+
+
+--
+
+-- Name: subjects subjects_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.subjects
+
+    ADD CONSTRAINT subjects_name_key UNIQUE (name);
+
+
+
+
+
+--
+
+-- Name: subjects subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.subjects
+
+    ADD CONSTRAINT subjects_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: teachers teachers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers
+
+    ADD CONSTRAINT teachers_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: teachers_subjects teachers_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects
+
+    ADD CONSTRAINT teachers_subjects_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: teachers_subjects teachers_subjects_teacher_id_subject_id_class_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects
+
+    ADD CONSTRAINT teachers_subjects_teacher_id_subject_id_class_id_key UNIQUE (teacher_id, subject_id, class_id);
+
+
+
+
+
+--
+
+-- Name: teachers teachers_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers
+
+    ADD CONSTRAINT teachers_user_id_key UNIQUE (user_id);
+
+
+
+
+
+--
+
+-- Name: timetable timetable_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.timetable
+
+    ADD CONSTRAINT timetable_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.users
+
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+
+
+
+--
+
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.users
+
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+
+
+
+--
+
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.users
+
+    ADD CONSTRAINT users_username_key UNIQUE (username);
+
+
+
+
+
+--
+
+-- Name: email_verifications email_verifications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.email_verifications
+
+    ADD CONSTRAINT email_verifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: grades grades_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.grades
+
+    ADD CONSTRAINT grades_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.students(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: grades grades_subject_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.grades
+
+    ADD CONSTRAINT grades_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES public.subjects(id);
+
+
+
+
+
+--
+
+-- Name: grades grades_teacher_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.grades
+
+    ADD CONSTRAINT grades_teacher_id_fkey FOREIGN KEY (teacher_id) REFERENCES public.teachers(id);
+
+
+
+
+
+--
+
+-- Name: lesson_details lesson_details_timetable_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.lesson_details
+
+    ADD CONSTRAINT lesson_details_timetable_id_fkey FOREIGN KEY (timetable_id) REFERENCES public.timetable(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: students students_class_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.students
+
+    ADD CONSTRAINT students_class_id_fkey FOREIGN KEY (class_id) REFERENCES public.classes(id);
+
+
+
+
+
+--
+
+-- Name: students students_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.students
+
+    ADD CONSTRAINT students_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: teachers_subjects teachers_subjects_class_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects
+
+    ADD CONSTRAINT teachers_subjects_class_id_fkey FOREIGN KEY (class_id) REFERENCES public.classes(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: teachers_subjects teachers_subjects_subject_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects
+
+    ADD CONSTRAINT teachers_subjects_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: teachers_subjects teachers_subjects_teacher_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers_subjects
+
+    ADD CONSTRAINT teachers_subjects_teacher_id_fkey FOREIGN KEY (teacher_id) REFERENCES public.teachers(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: teachers teachers_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.teachers
+
+    ADD CONSTRAINT teachers_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: timetable timetable_class_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.timetable
+
+    ADD CONSTRAINT timetable_class_id_fkey FOREIGN KEY (class_id) REFERENCES public.classes(id) ON DELETE CASCADE;
+
+
+
+
+
+--
+
+-- Name: timetable timetable_subject_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.timetable
+
+    ADD CONSTRAINT timetable_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES public.subjects(id);
+
+
+
+
+
+--
+
+-- Name: timetable timetable_teacher_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+
+--
+
+
+
+ALTER TABLE ONLY public.timetable
+
+    ADD CONSTRAINT timetable_teacher_id_fkey FOREIGN KEY (teacher_id) REFERENCES public.teachers(id);
+
+
+
+
+
+--
+
+-- PostgreSQL database dump complete
+
+--
+
+
+
+\unrestrict 5lgqzYw0DJ8McEvzty0yfa8VFMWQCNDONI9RJIyEB4CIFYSI92f5oIhZYtnX7PT
+
+
+
