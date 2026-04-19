@@ -75,6 +75,7 @@ export default {
     }
     catch(error)
     {
+      console.error(error)
       this.isError = true;
       this.message = "Error loading data.";
     }
