@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web-ui
-        image: "vikt0rinho/frontend:450e19ab9006d26d1ebf2dccbad1370a0033902e"
+        image: "vikt0rinho/frontend:cbd36fb7d2d6b514a308fd07f11c01736ec6217c"
         ports:
         - containerPort: 80
 ---
