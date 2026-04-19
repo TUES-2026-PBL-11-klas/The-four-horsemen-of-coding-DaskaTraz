@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <div class="card">
+    <div class="card wide">
       <h2> Teacher Information</h2>
 
       <form @submit.prevent="finish">
         <div class="assignment-builder">
           <label>1. Select Subject</label>
-          <select v-model="currentSubjectId" @change="fetchAvailableClasses" required>
+          <select v-model="currentSubjectId" @change="fetchAvailableClasses">
             <option value="" disabled>Select Subject...</option>
             <option v-for="s in subjects" :key="s.id" :value="s.id">
               {{ s.subjectName }}
@@ -132,6 +132,53 @@ export default {
     },
     async finish()
     {
+      this.message = "";
+      this.isError = false;
+
+      const rawUserId = localStorage.getItem("userId");
+
+      if(!rawUserId)
+      {
+        this.isError = true;
+        this.message = "Session error. Please restart registration.";
+        return;
+      }
+
+      if(this.assignments.length === 0)
+      {
+        this.isError = true;
+        this.message = "Please add at least one subject and class!";
+        return;
+      }
+
+      try
+      {
+        const payload = {
+          userId: parseInt(rawUserId),
+          assignments: this.assignments.map(a => ({
+            subjectId: parseInt(a.subjectId),
+            classIds: a.classIds.map(id => parseInt(id))
+          }))
+        };
+
+        const response = await apiClient.post('/auth/register-teacher', payload);
+
+        if(response.data.success)
+        {
+          this.message = "Registration successful! Redirecting...";
+          this.isError = false;
+
+          setTimeout(() => {
+            this.$router.push('/verify');
+          }, 1500);
+        }
+      }
+      catch (error)
+      {
+        this.isError = true;
+        this.message = error.response?.data?.message || "Registration failed. Try again.";
+        console.error("Backend Error:", error.response?.data);
+      }
     }
   }
 };
@@ -146,6 +193,7 @@ export default {
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  color: #000;
 }
 label { display: block; color: #000; font-weight: 600; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
 .builder {

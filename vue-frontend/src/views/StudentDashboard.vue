@@ -167,7 +167,7 @@ export default {
       if(num >= 3.0 && num < 3.5) return "grade-3";
       if(num >= 3.5 && num < 4.5) return "grade-4";
       if(num >= 4.5 && num < 5.5) return "grade-5";
-      if(num >= 5.5 && num < 6.0) return "grade-6";
+      if(num >= 5.5 && num <= 6.0) return "grade-6";
       return "";
     },
 
@@ -265,7 +265,6 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* LEFT PANEL */
 .subjects-box {
   width: 280px;
   flex-shrink: 0;

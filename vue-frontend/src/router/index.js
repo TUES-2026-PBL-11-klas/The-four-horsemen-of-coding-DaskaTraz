@@ -5,8 +5,8 @@ import Student from '../views/Student.vue'
 import Teacher from '../views/Teacher.vue'
 import Login from '../views/Login.vue'
 import EmailVerify from '../views/EmailVerify.vue'
-import TeacherDashboard from '../views/TeacherDashBoard.vue'
-import StudentDashBoard from '../views/StudentDashBoard.vue'
+import TeacherDashboard from '../views/TeacherDashboard.vue'
+import StudentDashBoard from '../views/StudentDashboard.vue'
 import { jwtDecode } from "jwt-decode";
 const routes = [
   { path: '/', redirect: '/login' },
