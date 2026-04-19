@@ -10,11 +10,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.example.ElDnevniko.domain.dtos.StudentRegisterDto;
 import com.example.ElDnevniko.domain.dtos.UserRegisterDto;
 import com.example.ElDnevniko.domain.entities.UserEntity;
 import com.example.ElDnevniko.domain.entities.UserRole;
+import com.example.ElDnevniko.domain.entities.UserStatus;
 import com.example.ElDnevniko.mappers.UserMapper;
+import com.example.ElDnevniko.testUtils.TestDtoData;
 
 
 @ActiveProfiles("test")
@@ -26,19 +27,18 @@ public class UserMapperTest {
     private UserMapper userMapper;
 
     @Test
-    public void testUserRegisterDtoToEntity() {
-        UserRegisterDto dto = new StudentRegisterDto();
-        dto.setEmail("test@gmail.com");
-        dto.setUsername("testuser");
-        dto.setPassword("rawPassword123");
-        dto.setRole(UserRole.STUDENT);
+    public void testUserRegisterDtoToEntity() 
+    {
+        UserRegisterDto dto = TestDtoData.createUserRegisterDto(UserRole.STUDENT);
 
         UserEntity entity = this.userMapper.toEntity(dto);
 
         assertThat(entity).isNotNull();
         assertThat(entity.getEmail()).isEqualTo(dto.getEmail());
         assertThat(entity.getUsername()).isEqualTo(dto.getUsername());
-        assertThat(entity.getHashPassword()).isEqualTo("rawPassword123");
-        assertThat(entity.getRole()).isEqualTo(UserRole.STUDENT);
+        assertThat(entity.getHashPassword()).isEqualTo(dto.getPassword());
+        assertThat(entity.getRole()).isEqualTo(UserRole.NOTPROVIDED);
+        
+        assertThat(entity.getStatus()).isEqualTo(UserStatus.PROFILE_INCOMPLETE);
     }
 }
