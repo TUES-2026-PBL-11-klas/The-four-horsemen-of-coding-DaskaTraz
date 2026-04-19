@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-backend
-  namespace: backend 
+  namespace: backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: spring-api 
+      app: spring-api
   template:
     metadata:
       labels:
@@ -15,9 +15,7 @@ spec:
     spec:
       containers:
       - name: spring-app
-<<<<<<< HEAD
-        image: "vikt0rinho/backend:d6d2b2e1bed859afe7c38895cf99ffb90cf9ed81" 
->>>>>>> b521455 (trying to update images via git hub container registry)
+        image: "vikt0rinho/backend:placeholder"
         ports:
         - containerPort: 8080
         env:

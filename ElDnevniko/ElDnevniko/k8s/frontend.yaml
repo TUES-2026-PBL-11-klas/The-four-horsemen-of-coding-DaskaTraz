@@ -5,9 +5,9 @@ metadata:
   namespace: frontend
 spec:
   replicas: 3
-  selector: 
+  selector:
     matchLabels:
-      app: frontend 
+      app: frontend
   template:
     metadata:
       labels:
@@ -15,9 +15,7 @@ spec:
     spec:
       containers:
       - name: web-ui
-<<<<<<< HEAD
-        image: "vikt0rinho/frontend:d6d2b2e1bed859afe7c38895cf99ffb90cf9ed81"
->>>>>>> b521455 (trying to update images via git hub container registry)
+        image: "vikt0rinho/frontend:placeholder"
         ports:
         - containerPort: 80
 ---
