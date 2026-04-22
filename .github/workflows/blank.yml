@@ -25,8 +25,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # - name: Build with Maven
+      #   run: mvn clean package -DskipTests -X
+
       - name: Build with Maven
-        run: mvn clean package -DskipTests -X
+        run: mvn -f The-four-horsemen-of-coding-DaskaTraz/ElDnevniko/ElDnevniko/pom.xml clean package -DskipTests
 
       # - name: Run tests
       #  run: mvn -f ElDnevniko/ElDnevniko/pom.xml test     sfsaldfjfjpo'efmp
