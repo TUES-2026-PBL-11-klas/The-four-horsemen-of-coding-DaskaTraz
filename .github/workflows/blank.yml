@@ -1,0 +1,73 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'VOT'
+    paths-ignore:
+      - 'ElDnevniko/ElDnevniko/k8s/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn -f ElDnevniko/ElDnevniko/pom.xml clean package -DskipTests
+
+      # - name: Run tests
+      #  run: mvn -f ElDnevniko/ElDnevniko/pom.xml test     sfsaldfjfjpo'efmp
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker images
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+
+          IMAGE_NAME=vikt0rinho/backend
+          docker build -f ElDnevniko/ElDnevniko/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG ElDnevniko/ElDnevniko
+          docker push $IMAGE_NAME:$IMAGE_TAG
+
+          IMAGE_NAME=vikt0rinho/frontend
+          docker build -f ElDnevniko/ElDnevniko/vue-frontend/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG ElDnevniko/ElDnevniko/vue-frontend
+          docker push $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Update images' tag in manifests
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+
+          sed -i -E "s#image: \"[^\"]+\"#image: \"vikt0rinho/backend:$IMAGE_TAG\"#" ElDnevniko/ElDnevniko/k8s/backend.yaml
+          sed -i -E "s#image: \"[^\"]+\"#image: \"vikt0rinho/frontend:$IMAGE_TAG\"#" ElDnevniko/ElDnevniko/k8s/frontend.yaml
+
+      - name: Commit updated manifests
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ElDnevniko/ElDnevniko/k8s/backend.yaml
+          git add ElDnevniko/ElDnevniko/k8s/frontend.yaml
+          if git diff --cached --quiet; then
+            echo "No manifest change to commit"
+          else
+            git commit -m "ci: update images' tags to $IMAGE_TAG"
+            git push
+          fi
+
+    #never a blank file to trigger the workflow on push to VOT branch, since the workflow is configured to ignore changes in k8s manifests, which are the only files that get changed on push to VOT branch.
