@@ -46,7 +46,7 @@ jobs:
           docker push $IMAGE_NAME:$IMAGE_TAG
 
           IMAGE_NAME=vikt0rinho/frontend
-          docker build -f vue-frontend/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG ElDnevniko/ElDnevniko/vue-frontend
+          docker build -f vue-frontend/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG vue-frontend
           docker push $IMAGE_NAME:$IMAGE_TAG
 
       - name: Update images' tag in manifests
