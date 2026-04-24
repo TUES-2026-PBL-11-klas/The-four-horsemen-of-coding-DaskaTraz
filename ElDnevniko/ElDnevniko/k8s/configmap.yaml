@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: backend
+data:
+  DB_NAME: "eldnevniko"
+  DB_USERNAME: "postgres"
+  MAIL_HOST: "smtp.gmail.com"
+  MAIL_PORT: "587"
+  MAIL_USERNAME: "kaloian3141@gmail.com"
+  TEST_MAIL_HOST: "sandbox.smtp.mailtrap.io"
+  TEST_MAIL_PORT: "2525"
+  TEST_MAIL_USERNAME: "3a43eecc24cdb4"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  namespace: database
+data:
+  DB_NAME: "eldnevniko"
+  DB_USER: "postgres"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: frontend
+data:
+  VITE_API_BASE_URL: "http://localhost/api"

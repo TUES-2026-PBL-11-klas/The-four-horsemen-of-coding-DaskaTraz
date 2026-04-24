@@ -5,7 +5,7 @@ metadata:
   namespace: backend
 spec:
   replicas: 2
-  selector:
+  selector: 
     matchLabels:
       app: spring-api
   template:
@@ -19,15 +19,72 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: SPRING_DATASOURCE_URL
-          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/eldnevniko"
-        - name: SPRING_DATASOURCE_USERNAME
-          value: "postgres"
-        - name: SPRING_DATASOURCE_PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DB_NAME
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DB_USERNAME
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
-              key: password
+              name: app-secrets
+              key: DB_PASSWORD
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres-service.database.svc.cluster.local:5432/$(DB_NAME)"
+        - name: MAIL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MAIL_HOST
+        - name: MAIL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MAIL_PORT
+        - name: MAIL_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MAIL_USERNAME
+        - name: MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: MAIL_PASSWORD
+        - name: TEST_MAIL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: TEST_MAIL_HOST
+        - name: TEST_MAIL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: TEST_MAIL_PORT
+        - name: TEST_MAIL_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: TEST_MAIL_USERNAME
+        - name: TEST_MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: TEST_MAIL_PASSWORD
+        - name: JWT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: JWT_PASSWORD
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: "org.hibernate.dialect.PostgreSQLDialect"
+        - name: SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT
+          value: "0"
 ---
 apiVersion: v1
 kind: Service
