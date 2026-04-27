@@ -21,11 +21,3 @@ metadata:
 data:
   DB_NAME: "eldnevniko"
   DB_USER: "postgres"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-config
-  namespace: frontend
-data:
-  VITE_API_BASE_URL: "http://localhost/api"

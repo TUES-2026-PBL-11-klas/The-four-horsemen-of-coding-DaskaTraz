@@ -64,7 +64,7 @@ export default {
 
       try
       {
-            const response = await apiClient.post('api/auth/register', user);
+            const response = await apiClient.post('/auth/register', user);
             const userId = response.data.data;
 
             localStorage.setItem("userId", userId);
