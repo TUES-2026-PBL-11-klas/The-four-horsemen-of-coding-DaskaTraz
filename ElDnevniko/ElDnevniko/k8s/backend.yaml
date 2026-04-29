@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: spring-app
-        image: "vikt0rinho/backend:53212556c6b7d4d31719ca21bf7bf7b992116e7d"
+        image: "vikt0rinho/backend:9aedd44fd960ebcd6421ae1163df77c9e1ce4e56"
         ports:
         - containerPort: 8080
         env:
