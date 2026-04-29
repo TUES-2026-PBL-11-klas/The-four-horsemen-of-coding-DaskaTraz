@@ -14,9 +14,9 @@ configMapGenerator:
     namespace: database
     files:
       - 01-init.sql=database/migration/V1__init.sql
-      - 02-role-check.sql=database/migration/V2__role_check.sql
-      - 03-spelling-change.sql=database/migration/V3__spelling_change.sql
-      - 04-seed.sql=database/migration/V4__seed.sql
+      - 02-role-check.sql=database/migration/V2__Role_Check_addition.sql
+      - 03-spelling-change.sql=database/migration/V3__Spelling_chnage.sql
+      - 04-seed.sql=database/seed.sql
 
 generatorOptions:
   disableNameSuffixHash: true
