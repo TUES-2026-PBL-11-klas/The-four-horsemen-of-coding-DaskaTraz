@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - configmap.yaml
+  - secrets.yaml
+  - database.yaml
+  - backend.yaml
+  - frontend.yaml
+  - Ingres.yml
+
+configMapGenerator:
+  - name: db-init-scripts
+    namespace: database
+    files:
+      - 01-init.sql=database/migration/V1__init.sql
+      - 02-role-check.sql=database/migration/V2__role_check.sql
+      - 03-spelling-change.sql=database/migration/V3__spelling_change.sql
+      - 04-seed.sql=database/migration/V4__seed.sql
+
+generatorOptions:
+  disableNameSuffixHash: true
